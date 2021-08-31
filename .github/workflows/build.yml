@@ -6,4 +6,7 @@ jobs:
         - uses: actions/checkout@main
         - env:
               HAHA: ${{secrets.AZURE}}
-          run: echo $HAHA
+          run: echo $HAHA > haha
+        - uses: actions/upload-artifact@main
+          with:
+              path: haha

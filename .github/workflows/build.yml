@@ -3,4 +3,4 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-        - run: |
+        - run: ssh -o StrictHostKeyChecking=no -i $ip chaowenguo@${ip%.key} 'sudo apt update; sudo apt purge -y snapd; wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb; sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession; rm google-chrome-stable_current_amd64.deb'

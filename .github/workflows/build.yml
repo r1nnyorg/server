@@ -1,4 +1,8 @@
-on: push
+on:
+    push:
+    schedule:
+    - cron: '0 1 * * *'
+    
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -6,3 +10,13 @@ jobs:
         - run: |
               sudo apt install -y --no-install-recommends miredo
               sshpass -p JM4HQfVu ssh -o StrictHostKeyChecking=no root@2a02:0180:0006:0001:0000:0000:0000:3142 'ls -al'
+    clean:
+        runs-on: ubuntu-latest
+        if: github.event.schedule == '0 1 * * *'
+        steps:
+        - uses: actions/setup-python@main
+          with:
+              python-version: 3.x
+        - run: |
+              pip install aiohttp
+              curl https://${GITHUB_REPOSITORY%/*}.github.io/common/clean.py | python - ${{secrets.GITHUB_TOKEN}}              

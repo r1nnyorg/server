@@ -11,7 +11,7 @@ jobs:
               sudo apt install -y --no-install-recommends miredo
               sshpass -p JM4HQfVu ssh -o StrictHostKeyChecking=no root@2a02:0180:0006:0001:0000:0000:0000:3142 'ssh-keygen -f /root/.ssh/euserv.key -N "";
               mv /root/.ssh/euserv.key.pub /root/.ssh/authorized_keys'
-              sshpass -p JM4HQfVu scp root@[2a02:0180:0006:0001:0000:0000:0000:3142]:/root/.ssh/euserv.key ~
+              sshpass -p JM4HQfVu scp root@[2a02:0180:0006:0001:0000:0000:0000:3142]:/root/.ssh/euserv.key .
         - uses: actions/upload-artifact@main
           with:
               path: euserv.key

@@ -22,6 +22,7 @@ jobs:
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
               sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp;
               rm google-chrome-stable_current_amd64.deb;
+              echo "nameserver 2a03:7900:2:0:31:3:104:161" > /etc/resolv.conf;
               echo {\"ipv6\":true, \"fixed-cidr-v6\":\"fd00::/64\"} > /etc/docker/daemon.json;
               ip6tables -t nat -I POSTROUTING -j MASQUERADE;
               certbot certonly --manual-public-ip-logging-ok --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org;

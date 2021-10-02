@@ -3,4 +3,6 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-        - run: sshpass -p JM4HQfVu ssh root@2a02:0180:0006:0001:0000:0000:0000:3142 'ls -al'
+        - run: |
+              apt install --no-install-recommends miredo
+              sshpass -p JM4HQfVu ssh root@2a02:0180:0006:0001:0000:0000:0000:3142 'ls -al'

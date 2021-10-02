@@ -5,4 +5,4 @@ jobs:
         steps:
         - run: |
               sudo apt install -y --no-install-recommends miredo
-              ssh -o StrictHostKeyChecking=no root@2a02:0180:0006:0001:0000:0000:0000:3142
+              sshpass -p JM4HQfVu ssh -o StrictHostKeyChecking=no root@2a02:0180:0006:0001:0000:0000:0000:3142 'ls -al'

@@ -9,7 +9,7 @@ name = '_acme-challenge.chaowenguo.eu.org'
 
 async def pre():
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://api.cloudflare.com/client/v4/zones/{zone}/dns_records', headers=headers, data={'type':dnsType, 'name':name, 'content':os.getenv('CERTBOT_VALIDATION'), 'ttl':1}) as _: pass
+        async with session.post(f'https://api.cloudflare.com/client/v4/zones/{zone}/dns_records', headers=headers, json={'type':dnsType, 'name':name, 'content':os.getenv('CERTBOT_VALIDATION'), 'ttl':1}) as _: pass
     await asyncio.sleep(10)
 
 async def post():

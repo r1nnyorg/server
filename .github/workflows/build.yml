@@ -17,8 +17,9 @@ jobs:
               sudo systemctl restart ssh;
               sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
-              sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession;
-              rm google-chrome-stable_current_amd64.deb'
+              sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot;
+              rm google-chrome-stable_current_amd64.deb;
+              certbot certonly --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org'
         - uses: actions/upload-artifact@main
           with:
               path: euserv.key

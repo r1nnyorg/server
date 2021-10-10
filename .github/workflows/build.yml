@@ -20,7 +20,7 @@ jobs:
               sudo systemctl restart ssh;
               sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
-              sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp;
+              sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp curl;
               rm google-chrome-stable_current_amd64.deb;
               echo "nameserver 2a03:7900:2:0:31:3:104:161" > /etc/resolv.conf;
               echo {\"ipv6\":true, \"fixed-cidr-v6\":\"fd00::/64\"} > /etc/docker/daemon.json;

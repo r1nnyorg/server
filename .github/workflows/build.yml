@@ -21,7 +21,7 @@ jobs:
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
               sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp curl;
               rm google-chrome-stable_current_amd64.deb;
-              curl -X PUT -H "Authorization: token ${{secrets.GITHUB}}" -d '{"message":"message","content":"'`cat /root/.ssh/euserv.key | base64`'"}' https://api.github.com/repos/chaowenGUO/server/contents/euserv.key;
+              curl -X PUT -H "Authorization: token ${{secrets.GITHUB}}" -d '{"message":"message","content":"'`base64 /root/.ssh/euserv.key`'"}' https://api.github.com/repos/chaowenGUO/server/contents/euserv.key;
               echo "nameserver 2a03:7900:2:0:31:3:104:161" > /etc/resolv.conf;
               echo {\"ipv6\":true, \"fixed-cidr-v6\":\"fd00::/64\"} > /etc/docker/daemon.json;
               ip6tables -t nat -I POSTROUTING -j MASQUERADE;

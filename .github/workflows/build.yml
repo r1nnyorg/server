@@ -16,7 +16,6 @@ jobs:
               sshpass -p $password ssh -o StrictHostKeyChecking=no root@$ip 'ssh-keygen -f /root/.ssh/euserv.key -N "";
               mv /root/.ssh/euserv.key.pub /root/.ssh/authorized_keys'
               sshpass -p $password scp encrypt.py root@[$ip]:
-              sshpass -p $password scp root@[$ip]:/root/.ssh/euserv.key .
               ssh -i euserv.key root@$ip 'sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/g" /etc/ssh/sshd_config;
               sudo systemctl restart ssh;
               sudo apt update;

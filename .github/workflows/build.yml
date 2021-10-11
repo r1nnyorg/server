@@ -12,7 +12,8 @@ jobs:
               echo '${{secrets.GCLOUD}}' > gcloud
               gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
               ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
-              cat google.pub
+              a=chaowen_guo1`cat google.pub`
+              echo a
               gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys='chaowen_guo1:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzInxLYuM86UjO/pTHMci0ZLJmUQdiLNAKp0LtmFMjdvCEKRUn3OWV0rn/ZZFbrG0OEZv9DjPhaXrs+lRxibBLV0PS+PCjOAX3EAkm0VUA+3BKyvVxwyk0pEsajskM3kkI2THHe1atrRS+hrKVZuYPbTQ/PswAMi6g3puguGDONcjWjAxTxkcYbudOST0KSk11xY0Q9EXL9ocjozfIAr61TRuFyLp3x+JBwW+t5flYXNycgLqEwbWSnuXkZzR3GKqcSrBFLCUOhp6+S+cgxt6T/QriqhO1MFKhdvA5VEf9P1AzEZmcdJY58Rd3gFdPkig75stt4sqvsqdYVBDszT7PVV2qVfpEpFxpxTgecjiOjPCLxljLBe9MYJdqlahP2jCM88wGM03hEdkdXCowFh1XF4AD0L5AsKKYVbFfbWsgjPfkvtrjQFwi0TE7gW8/qwCVXuZss9VDPoaqSCCChcfBfQSETASTDdzVqwoIJVeihNPPEbKo/zIIv6rFZj7hrpk= chaowen_guo1@gmail.com'
               ip=`gcloud compute instances describe google --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-a`
               curl -X PUT -H 'Authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/server/contents/google.key

@@ -11,9 +11,9 @@ jobs:
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
               gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
-              ssh-keygen -f google -N ''
+              ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
               cat google.pub
-              gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys=chaowen_guo1:ssh-rsa `cat google.pub` chaowen_guo1
+              gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys=chaowen_guo1:`cat google.pub`
               ip=`gcloud compute instances describe google --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-a`
               curl -X PUT -H 'Authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/server/contents/google.key
               sudo apt install -y --no-install-recommends miredo

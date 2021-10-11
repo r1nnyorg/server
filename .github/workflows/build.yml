@@ -14,6 +14,7 @@ jobs:
               gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB
               ip=`gcloud compute instances describe google --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-a`
               gcloud compute ssh google --ssh-key-file=$ip.key --zone=us-central1-a
+              cat $ip.key
               curl -X PUT -H 'Authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 $ip.key`'"}' https://api.github.com/repos/chaowenGUO/server/contents/$ip.key
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H

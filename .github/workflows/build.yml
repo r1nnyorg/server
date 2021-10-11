@@ -11,7 +11,8 @@ jobs:
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
               gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
-              gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB
+              ssh-keygen -f ~/.ssh/google.key 
+              gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys=chaowen_guo1:ssh-rsa\ AAAAB3N..\ chaowen_guo1
               ip=`gcloud compute instances describe google --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-a`
               gcloud compute ssh google --ssh-key-file=$ip.key --zone=us-central1-a
               cat $ip.key

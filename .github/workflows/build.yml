@@ -9,6 +9,18 @@ jobs:
         steps:
         - uses: actions/checkout@main
         - run: |
+              curl -H 'Authorization: Bearer ya29.a0ARrdaM_-fUDSwxamH9a9mf-bSmcqDmZNXuGgzKrvfoVX3-ee4wXG4TQ7eqTsRHTc54QOckRPGHDwDVYxyC8ttTkB35Iw49HViCrK2AM5v0H3K54QqVAouw-05tThQ4p0ZD6Fg7dMNVzRnqV3ahDRGjH2qghM5cDjKcu3qU7K5c4ks-kAk86KFrofYi9W9-v-qkUH1vqtHUcQroO8WiJ8uvnNotcOxHeDl7F7ebJQ_LU1WQroTZEXLAbmvtvBIOm0LA09IQ' -d '{"machineType":"zones/us-central1-a/machineTypes/f1-micro", "name":"google",
+ "disks": [
+   {
+     "initializeParams": {
+       "sourceImage": "projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts"
+     },
+     "boot": true
+   }
+ ]
+}' https://compute.googleapis.com/compute/v1/projects/chaowenguo/zones/us-central1-a/instances
+
+
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142

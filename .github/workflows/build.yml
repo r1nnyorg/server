@@ -15,6 +15,10 @@ jobs:
               gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
               ip=`gcloud compute instances describe google --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-a`
               curl -X PUT -H 'Authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/server/contents/$ip.key
+              ssh -i google chaowen_guo1@$ip 'sudo apt update;
+              wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
+              sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession;
+              rm google-chrome-stable_current_amd64.deb'
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142

@@ -16,7 +16,7 @@ jobs:
               ip=`gcloud compute instances describe google --format='get(networkInterfaces[0].accessConfigs[0].natIP)' --zone=us-central1-a`
               curl -X PUT -H 'Authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/server/contents/$ip.key
               sleep 1m
-              ssh -i google chaowen_guo1@$ip 'sudo apt update;
+              ssh -o StrictHostKeyChecking=no -i google chaowen_guo1@$ip 'sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
               sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession;
               rm google-chrome-stable_current_amd64.deb'

@@ -12,7 +12,7 @@ jobs:
               echo '${{secrets.GCLOUD}}' > gcloud
               ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
               pip install aiohttp google-auth
-              ip=`python gcloud.py`
+              ip=`python gcloud.py ${{secrets.GITHUB}}`
               ssh -o StrictHostKeyChecking=no -i google chaowen_guo1@$ip 'sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
               sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession;

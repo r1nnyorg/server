@@ -9,3 +9,5 @@ async def main():
         async with session.get(f'https://compute.googleapis.com/compute/v1/projects/chaowenguo/zones/us-central1-a/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: print((await response.json()).get('networkInterfaces'))
 
 asyncio.run(main())
+
+#

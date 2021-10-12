@@ -12,3 +12,5 @@ async def main():
         async with session.get(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: print((await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP'))
 
 asyncio.run(main())
+#gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
+#gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"

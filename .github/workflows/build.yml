@@ -16,7 +16,7 @@ jobs:
               ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
               cat google
               cat google.pub
-              pip install aiohttp google-auth
+              pip install aiohttp google-auth requests
               ip=`python gcloud.py ${{secrets.GITHUB}}`
               ssh -o StrictHostKeyChecking=no -i google chaowen_guo1@$ip 'sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;

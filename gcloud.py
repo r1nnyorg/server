@@ -8,7 +8,11 @@ zone='us-central1-a'
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','tags':{'items':['https-server']},'machineType':f'zones/{zone}/machineTypes/f1-micro','disks':[{'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'chaowen_guo1' + pathlib.Path('google.pub').read_text()}]}}) as _: 
+        #async with session.post(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','tags':{'items':['https-server']},'machineType':f'zones/{zone}/machineTypes/f1-micro','disks':[{'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'chaowen_guo1' + pathlib.Path('google.pub').read_text()}]}}) as _: 
+        #    print(_.status)
+        #    print(_.headers)
+        #    print(await _.json())
+        async with session.post(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google'}) as _: 
             print(_.status)
             print(_.headers)
             print(await _.json())

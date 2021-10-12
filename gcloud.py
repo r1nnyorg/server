@@ -15,6 +15,7 @@ async def main():
         async with session.get(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
         async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('google').read_bytes()).decode()}) as _: pass
         ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ip, username='chaowen_guo1', pkey=paramiko.RSAKey.from_private_key_file('google'))
         ssh.exec_command('''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

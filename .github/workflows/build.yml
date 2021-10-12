@@ -13,7 +13,7 @@ jobs:
               ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
               pip install aiohttp google-auth
               ip=`python gcloud.py`
-              curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/server/contents/$ip.key
+              curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/key/contents/$ip.key
               sleep 1m
               ssh -o StrictHostKeyChecking=no -i google chaowen_guo1@$ip 'sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
@@ -49,7 +49,7 @@ jobs:
                   scp -i ~/$i.key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::$i]:/etc/letsencrypt/live
               done
               EOF'
-              curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/server/contents/euserv.key
+              curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     clean:
         runs-on: ubuntu-latest
         if: github.event.schedule == '0 1 * * *'

@@ -6,8 +6,6 @@ credentials.refresh(auth_req)
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'https://compute.googleapis.com/compute/v1/projects/chaowenguo/zones/us-central1-a/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: print((await response.json()).get('networkInterfaces'))
+        async with session.get(f'https://compute.googleapis.com/compute/v1/projects/chaowenguo/zones/us-central1-a/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: print((await response.json()).get('networkInterfaces')[0].get('accessConfigs'))
 
 asyncio.run(main())
-
-#

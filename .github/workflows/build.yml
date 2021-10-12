@@ -10,9 +10,6 @@ jobs:
         - uses: actions/checkout@main
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
-              gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
-              ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
-              #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
               pip install aiohttp google-auth
               ip=`python gcloud.py`
               curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/server/contents/$ip.key

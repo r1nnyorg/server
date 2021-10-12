@@ -12,7 +12,7 @@ jobs:
               echo '${{secrets.GCLOUD}}' > gcloud
               ssh-keygen -f google -N '' -C chaowen_guo1@gmail.com
               pip install aiohttp google-auth
-              ip=`python gcloud.py`
+              #ip=`python gcloud.py`
               curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 google`'"}' https://api.github.com/repos/chaowenGUO/key/contents/$ip.key
               sleep 1m
               ssh -o StrictHostKeyChecking=no -i google chaowen_guo1@$ip 'sudo apt update;

@@ -14,13 +14,13 @@ async def main():
         await asyncio.sleep(15)
         async with session.get(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
         async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('google').read_bytes()).decode()}) as _: pass
-
-asyncio.run(main())
-ssh = paramiko.SSHClient()
-ssh.connect(ip, username='chaowen_guo1', pkey=paramiko.RSAKey.from_private_key_file('google'))
-ssh.exec_command('''sudo apt update
+        ssh = paramiko.SSHClient()
+        ssh.connect(ip, username='chaowen_guo1', pkey=paramiko.RSAKey.from_private_key_file('google'))
+        ssh.exec_command('''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
 rm google-chrome-stable_current_amd64.deb''')
+
+asyncio.run(main())
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"

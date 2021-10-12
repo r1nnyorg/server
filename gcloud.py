@@ -9,6 +9,7 @@ zone='us-central1-a'
 async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','tags':{'items':['https-server']},'machineType':f'zones/{zone}/machineTypes/f1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'chaowen_guo1:' + pathlib.Path(__file__).resolve().parent.joinpath('google.pub').read_text()}]}}) as _: pass
+        await asyncio.sleep(60)
         async with session.get(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: print((await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP'))
 
 asyncio.run(main())

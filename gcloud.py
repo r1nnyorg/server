@@ -27,4 +27,3 @@ rm google-chrome-stable_current_amd64.deb''')
 asyncio.run(main())
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
-#

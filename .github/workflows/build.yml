@@ -13,7 +13,7 @@ jobs:
               python-version: 3.x
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
-              pip install aiohttp google-auth requests paramiko
+              pip install aiohttp google-auth requests paramiko asyncssh
               python gcloud.py ${{secrets.GITHUB}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H

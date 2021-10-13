@@ -13,7 +13,7 @@ jobs:
               python-version: 3.x
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
-              pip install aiohttp google-auth requests paramiko asyncssh
+              pip install aiohttp google-auth requests asyncssh
               python gcloud.py ${{secrets.GITHUB}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H
@@ -32,19 +32,13 @@ jobs:
               echo {\"ipv6\":true, \"fixed-cidr-v6\":\"fd00::/64\"} > /etc/docker/daemon.json;
               ip6tables -t nat -I POSTROUTING -j MASQUERADE;
               certbot certonly --manual-public-ip-logging-ok --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org;
-              for i in 129.159.33.8 129.159.37.84;
-              do
-                  curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/key/main/$i.key > $i.key;
-                  chmod 400 $i.key;
-              done;
               cat <<EOF > /etc/cron.monthly/encrypt
               #!/bin/bash
               certbot renew
-              for i in 129.159.33.8 129.159.37.84
+              for i in ~/*.key
               do
-                  scp -i ~/$i.key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::$i]:/etc/letsencrypt/live
-              done
-              EOF'
+                  scp -i $i -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo ${i%.key} | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
+              done'
               curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     clean:
         runs-on: ubuntu-latest

@@ -13,7 +13,6 @@ jobs:
               python-version: 3.x
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
-              ssh-keygen -f google -N ''
               pip install aiohttp google-auth requests paramiko
               python gcloud.py ${{secrets.GITHUB}}
               sudo apt install -y --no-install-recommends miredo

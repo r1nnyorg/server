@@ -34,7 +34,7 @@ jobs:
               certbot certonly --manual-public-ip-logging-ok --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org;
               for i in 129.159.33.8 129.159.37.84;
               do
-                  curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/$i.key > $i.key;
+                  curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/key/main/$i.key > $i.key;
                   chmod 400 $i.key;
               done;
               cat <<EOF > /etc/cron.monthly/encrypt

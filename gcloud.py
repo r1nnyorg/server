@@ -16,7 +16,7 @@ async def main():
         await asyncio.sleep(45)
         async with session.get(f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances/google', headers={'authorization':f'Bearer {credentials.token}'}) as response: ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
         async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('google').read_bytes()).decode()}) as _: pass
-        async with asyncssh.connect(ip, username='chaowenguo', client_keys=['google'], known_hosts=None) as ssh: await ssh.run('''sudo apt update
+        async with asyncssh.connect(ip, username='ubuntu', client_keys=['google'], known_hosts=None) as ssh: await ssh.run('''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
 rm google-chrome-stable_current_amd64.deb

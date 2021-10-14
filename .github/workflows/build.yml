@@ -14,7 +14,7 @@ jobs:
         - run: |
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install aiohttp google-auth requests asyncssh
-              python gcloud.py ${{secrets.GITHUB}}
+              #python gcloud.py ${{secrets.GITHUB}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142

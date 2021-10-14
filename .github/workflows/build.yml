@@ -12,6 +12,7 @@ jobs:
           with:
               python-version: 3.x
         - run: |
+              pip install oci
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install aiohttp google-auth requests asyncssh
               #python gcloud.py ${{secrets.GITHUB}}

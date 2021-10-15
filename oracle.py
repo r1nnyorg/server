@@ -8,6 +8,8 @@ vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(crea
 createSubnetDetails = oci.core.models.CreateSubnetDetails(compartment_id=vcn.compartment_id,vcn_id=vcn.id,cidr_block=vcn.cidr_block)
 subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails,wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(oci.core.ComputeClient(configure))
+oci.core.models.LaunchInstanceDetails(compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':ssh_public_key},
+        source_details=instance_source_via_image_details, create_vnic_details=oci.core.models.CreateVnicDetails(subnet_id=subnet.id))
 #instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(
 #        launch_instance_details,
 #        wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]

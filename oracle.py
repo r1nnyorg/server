@@ -3,6 +3,6 @@ configure = {'user':'ocid1.user.oc1..aaaaaaaalwudh6ys7562qtyfhxl4oji25zn6aapndqf
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
 createVcnDetails = oci.core.models.CreateVcnDetails(compartment_id='chaowenguo1')
-vnc = virtual_network_composite_operations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
+vnc = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
 print('Created VCN: {}'.format(vcn.id))
 print('{}'.format(vcn))

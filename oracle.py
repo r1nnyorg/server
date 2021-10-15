@@ -14,4 +14,4 @@ key.write_private_key('oracle')
 #instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
 #print('Launched Instance: {}'.format(instance.id))
 #print('{}'.format(instance))
-print(oci.core.ComputeClient(configure).list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].get('id'))
+print(oci.core.ComputeClient(configure).list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id))

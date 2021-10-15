@@ -1,4 +1,4 @@
-import oci
+import oci, asyncssh
 configure = {'user':'ocid1.user.oc1..aaaaaaaalwudh6ys7562qtyfhxl4oji25zn6aapndqfuy2jfroyyielpu3pa', 'key_file':'oci.key', 'fingerprint':'bd:01:98:0d:5d:4a:6f:b2:49:b4:7f:df:43:00:32:39', 'tenancy':'ocid1.tenancy.oc1..aaaaaaaa4h5yoefhbxm4ybqy6gxl6y5cgxmdijira7ywuge3q4cbdaqnyawq', 'region':'us-sanjose-1'}
 oci.config.validate_config(configure)
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
@@ -8,7 +8,10 @@ vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(crea
 createSubnetDetails = oci.core.models.CreateSubnetDetails(compartment_id=vcn.compartment_id,vcn_id=vcn.id,cidr_block=vcn.cidr_block)
 subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails,wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(oci.core.ComputeClient(configure))
-oci.core.models.LaunchInstanceDetails(compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':ssh_public_key},
+key = asyncssh.generate_private_key('ssh-rsa')
+key.write_private_key('google')
+ 
+oci.core.models.LaunchInstanceDetails(compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':},
         source_details=instance_source_via_image_details, create_vnic_details=oci.core.models.CreateVnicDetails(subnet_id=subnet.id))
 #instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(
 #        launch_instance_details,

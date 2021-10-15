@@ -13,10 +13,10 @@ jobs:
               python-version: 3.x
         - run: |
               echo '${{secrets.OCI}}' > oci.key
-              pip install oci
+              pip install oci asyncssh
               python oracle.py
               echo '${{secrets.GCLOUD}}' > gcloud
-              pip install aiohttp google-auth requests asyncssh
+              pip install aiohttp google-auth requests
               #python gcloud.py ${{secrets.GITHUB}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H

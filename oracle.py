@@ -10,8 +10,7 @@ subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_stat
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(oci.core.ComputeClient(configure))
 key = asyncssh.generate_private_key('ssh-rsa')
 key.write_private_key('oracle')
-#launchInstanceDetails = oci.core.models.LaunchInstanceDetails(compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=oci.core.ComputeClient(configure).list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
-#instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
-#print('Launched Instance: {}'.format(instance.id))
-#print('{}'.format(instance))
-print(oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data)
+launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=oci.core.ComputeClient(configure).list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
+instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
+print('Launched Instance: {}'.format(instance.id))
+print('{}'.format(instance))

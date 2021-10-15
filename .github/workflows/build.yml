@@ -14,7 +14,7 @@ jobs:
         - run: |
               echo '${{secrets.OCI}}' > oci.key
               pip install oci asyncssh aiohttp
-              python oracle.py
+              python oracle.py ${{secrets.GITHUB}}
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install google-auth requests
               #python gcloud.py ${{secrets.GITHUB}}

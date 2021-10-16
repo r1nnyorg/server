@@ -43,7 +43,7 @@ sudo chmod 757 $encrypt''')
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/oracle.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(str(await asyncio.gather(ip(), ip())).encode()).decode()}) as _: pass
+        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(str(await asyncio.gather(ip(), ip())).encode()).decode()}) as _: pass
         async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/oracle.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('oracle').read_bytes()).decode()}) as _: pass
 
 #asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))

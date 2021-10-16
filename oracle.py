@@ -23,11 +23,11 @@ addSecurityRulesDetails = oci.core.models.AddNetworkSecurityGroupSecurityRulesDe
 virtualNetworkClient.add_network_security_group_security_rules(security.id, addSecurityRulesDetails)
 computeClient = oci.core.ComputeClient(configure)
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(computeClient)
+key = asyncssh.generate_private_key('ssh-rsa')
+key.write_private_key('oracle')
+launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
 
-async def main():
-    key = asyncssh.generate_private_key('ssh-rsa')
-    key.write_private_key('oracle')
-    launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
+async def main(): 
     instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
     async with aiohttp.ClientSession() as session:
@@ -41,5 +41,4 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
 
-asyncio.run(main())
-asyncio.run(main())
+asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))

@@ -13,7 +13,7 @@ subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_stat
 createInternetGatewayDetails = oci.core.models.CreateInternetGatewayDetails(compartment_id=vcn.compartment_id, is_enabled=True, vcn_id=vcn.id)
 gateway = virtualNetworkClientCompositeOperations.create_internet_gateway_and_wait_for_state(create_internet_gateway_details, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_AVAILABLE])
 route_rules = virtualNetworkClient.get_route_table(vcn.default_route_table_id).data.route_rules
-route_rules.append(oci.core.models.RouteRule(cidr_block=None, destination='0.0.0.0/0', destination_type='CIDR_BLOCK', network_entity_id=gateway.id)
+route_rules.append(oci.core.models.RouteRule(cidr_block=None, destination='0.0.0.0/0', destination_type='CIDR_BLOCK', network_entity_id=gateway.id))
 updateRouteTableDetails = oci.core.models.UpdateRouteTableDetails(route_rules=route_rules)
 virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(vcn.default_route_table_id, updateRouteTableDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
 computeClient = oci.core.ComputeClient(configure)

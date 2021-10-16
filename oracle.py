@@ -32,8 +32,7 @@ async def main():
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
     async with aiohttp.ClientSession() as session:
         async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('oracle').read_bytes()).decode()}) as _: pass
-    asyncio.sleep(60)
-    async with asyncssh.connect(ip, username='ubuntu', client_keys=['oracle'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge snapd
+    async with asyncssh.connect(ip, username='ubuntu', client_keys=['oracle'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession

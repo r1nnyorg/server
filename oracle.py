@@ -27,12 +27,10 @@ key = asyncssh.generate_private_key('ssh-rsa')
 key.write_private_key('oracle')
 launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
 
-async def main(): 
+async def ip(): 
     instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
-    async with aiohttp.ClientSession() as session:
-        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('oracle').read_bytes()).decode()}) as _: pass
-    await asyncio.sleep(120)
+    await asyncio.sleep(45)
     async with asyncssh.connect(ip, username='ubuntu', client_keys=['oracle'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -41,5 +39,12 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
+    return ip
 
-asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))
+async def main():
+    async with aiohttp.ClientSession() as session:
+        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/oracle.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(str(await asyncio.gather(ip(), ip())).encode()).decode()}) as _: pass
+        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/oracle.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('oracle').read_bytes()).decode()}) as _: pass
+
+#asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))
+asyncio.run(main())

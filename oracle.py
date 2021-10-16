@@ -16,15 +16,30 @@ route_rules = virtualNetworkClient.get_route_table(vcn.default_route_table_id).d
 route_rules.append(oci.core.models.RouteRule(cidr_block=None, destination='0.0.0.0/0', destination_type='CIDR_BLOCK', network_entity_id=gateway.id))
 updateRouteTableDetails = oci.core.models.UpdateRouteTableDetails(route_rules=route_rules)
 virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(vcn.default_route_table_id, updateRouteTableDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
+createNetworkSecurityGroupDetails = oci.core.models.CreateNetworkSecurityGroupDetails(compartment_id=vcn.compartment_id,vcn_id=vcn.id)
+security = virtualNetworkClientCompositeOperations.create_network_security_group_and_wait_for_state(createNetworkSecurityGroupDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE]).data
+addSecurityRuleDetails = oci.core.models.AddSecurityRuleDetails(direction='INGRESS', protocol='6', tcp_options=oci.core.models.TcpOptions(destination_port_range=oci.core.models.PortRange(min=443, max=443)))
+addSecurityRulesDetails = oci.core.models.AddNetworkSecurityGroupSecurityRulesDetails(security_rules=[addSecurityRuleDetails])
+virtualNetworkClient.add_network_security_group_security_rules(security.id, addSecurityRulesDetails)
 computeClient = oci.core.ComputeClient(configure)
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(computeClient)
-key = asyncssh.generate_private_key('ssh-rsa')
-key.write_private_key('oracle')
-launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
-instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
 
 async def main():
+    key = asyncssh.generate_private_key('ssh-rsa')
+    key.write_private_key('oracle')
+    launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu').data[0].id, subnet_id=subnet.id)
+    instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
+    ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
     async with aiohttp.ClientSession() as session:
-        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('oracle').read_bytes()).decode()}) as _: pass
-        
+        async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/{ip}.key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('oracle').read_bytes()).decode()}) as _: pass
+    async with asyncssh.connect(ip, username='ubuntu', client_keys=['oracle'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge snapd
+sudo apt update
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
+rm google-chrome-stable_current_amd64.deb
+encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
+sudo mkdir -p $encrypt
+sudo chmod 757 $encrypt''')
+
+asyncio.run(main())
 asyncio.run(main())

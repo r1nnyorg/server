@@ -38,9 +38,9 @@ jobs:
               cat <<EOF > /etc/cron.monthly/encrypt
               #!/bin/bash
               certbot renew
-              for i in ~/*.key
+              for i in `cat ~/ip`
               do
-                  scp -i $i -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo ${i%.key} | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
+                  scp -i ~/oracle.key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo $i | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
               done'
               curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     clean:

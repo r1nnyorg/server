@@ -20,6 +20,11 @@ security = virtualNetworkClientCompositeOperations.create_network_security_group
 addSecurityRuleDetails = oci.core.models.AddSecurityRuleDetails(direction='INGRESS', source='0.0.0.0/0', source_type='CIDR_BLOCK', protocol='6', tcp_options=oci.core.models.TcpOptions(destination_port_range=oci.core.models.PortRange(min=443, max=443)))
 addSecurityRulesDetails = oci.core.models.AddNetworkSecurityGroupSecurityRulesDetails(security_rules=[addSecurityRuleDetails])
 virtualNetworkClient.add_network_security_group_security_rules(security.id, addSecurityRulesDetails)
+
+list_security_rules_response = virtualNetworkClient.list_network_security_group_security_rules(security.id)
+security_rules = list_security_rules_response.data
+print('{}'.format(security_rules))
+
 computeClient = oci.core.ComputeClient(configure)
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(computeClient)
 key = asyncssh.generate_private_key('ssh-rsa')

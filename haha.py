@@ -42,3 +42,4 @@ sudo chmod 757 $encrypt''')
     return ip
 
 asyncio.run(oracle())
+#

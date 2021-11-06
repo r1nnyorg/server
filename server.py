@@ -62,7 +62,7 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
-        return ip
+            return ip
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute firewall-rules create FooService --allow=tcp:443
 #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"

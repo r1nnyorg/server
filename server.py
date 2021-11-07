@@ -29,22 +29,21 @@ key = asyncssh.generate_private_key('ssh-rsa')
 key.write_private_key('key')
 launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04 Minimal').data[0].id, subnet_id=subnet.id)
 
-print(key.export_public_key().decode())
-print(key.export_public_key().decode())
-print(key.export_public_key().decode())
+print(pathlib.Path('key').read_text())
 
-async def oracle(): 
-    instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
-    ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
-    await asyncio.sleep(60)
-    async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
-sudo apt update
+init = '''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
 rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
-sudo chmod 757 $encrypt''')
+sudo chmod 757 $encrypt'''
+
+async def oracle(): 
+    instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
+    ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
+    await asyncio.sleep(60)
+    async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
     return ip
 
 import google.auth, google.auth.transport.requests, google.oauth2, builtins
@@ -57,25 +56,19 @@ zone = 'us-central1-a'
 
 async def gcloud(session):
     instance = f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances'
-    #async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
-    #    if response.status == 200:
-    #        async with session.delete(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
+    async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
+        if response.status == 200:
+            async with session.delete(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
     firewall = f'https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls'
-    #async with session.get(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as response:
-    #    if response == 200:
-    #        async with session.delete(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
+    async with session.get(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as response:
+        if response == 200:
+            async with session.delete(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
     async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
     async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/f1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
         await asyncio.sleep(60)
-        async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt update
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
-rm google-chrome-stable_current_amd64.deb
-encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
-sudo mkdir -p $encrypt
-sudo chmod 757 $encrypt''')
+        async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run(init)
         return ip
 #ssh-keygen -f google -N ''
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
@@ -126,14 +119,7 @@ async def linux(session, token):
     async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
         ip = (await response.json()).get('properties').get('ipAddress')
         await asyncio.sleep(60)
-        async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
-sudo apt update
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
-rm google-chrome-stable_current_amd64.deb
-encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
-sudo mkdir -p $encrypt
-sudo chmod 757 $encrypt''')
+        async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
         return ip
 #ssh-keygen -f azure -N ''
 #if `az group exists -n linux`

@@ -15,7 +15,7 @@ jobs:
               echo '${{secrets.OCI}}' > oci.key
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install oci asyncssh aiohttp google-auth requests
-              python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}}
+              python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
               #python haha.py ${{secrets.GITHUB}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H

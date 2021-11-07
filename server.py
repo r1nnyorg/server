@@ -30,8 +30,6 @@ key = asyncssh.generate_private_key('ssh-rsa')
 key.write_private_key('key')
 launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04 Minimal').data[0].id, subnet_id=subnet.id)
 
-print(pathlib.Path('key').read_text())
-
 init = '''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
@@ -193,8 +191,9 @@ async def win(session, token):
 async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
-            token = (await response.json()).get('access_token') 
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token), win(session, token))).encode()).decode()}) as _: pass
+            token = (await response.json()).get('access_token')
+            await win(session, token)
+            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token))).encode()).decode()}) as _: pass
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 #asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))

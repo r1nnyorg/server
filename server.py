@@ -7,12 +7,12 @@ parser.add_argument('password')
 args = parser.parse_args()
 configure = {'user':'ocid1.user.oc1..aaaaaaaalwudh6ys7562qtyfhxl4oji25zn6aapndqfuy2jfroyyielpu3pa', 'key_file':'oci.key', 'fingerprint':'bd:01:98:0d:5d:4a:6f:b2:49:b4:7f:df:43:00:32:39', 'tenancy':'ocid1.tenancy.oc1..aaaaaaaa4h5yoefhbxm4ybqy6gxl6y5cgxmdijira7ywuge3q4cbdaqnyawq', 'region':'us-sanjose-1'}
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
-for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: print(_.id)
 virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
+for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_vcn_and_wait_for_state(vcn.id, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_TERMINATED])
 createVcnDetails = oci.core.models.CreateVcnDetails(compartment_id=configure.get('tenancy'), cidr_block='10.0.0.0/16')
 vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
 createSubnetDetails = oci.core.models.CreateSubnetDetails(compartment_id=vcn.compartment_id, vcn_id=vcn.id, cidr_block=vcn.cidr_block)
-subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails,wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
+subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
 createInternetGatewayDetails = oci.core.models.CreateInternetGatewayDetails(compartment_id=vcn.compartment_id, is_enabled=True, vcn_id=vcn.id)
 gateway = virtualNetworkClientCompositeOperations.create_internet_gateway_and_wait_for_state(createInternetGatewayDetails, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_AVAILABLE]).data
 route_rules = virtualNetworkClient.get_route_table(vcn.default_route_table_id).data.route_rules

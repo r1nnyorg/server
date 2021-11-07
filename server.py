@@ -103,6 +103,10 @@ async def linux(session):
                             await asyncio.sleep(int(machine.headers.get('retry-after')))
                             async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                                 if (await _.json()).get('status') == 'Succeeded': break
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/networkSecurityGroups/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'securityRules':[{'name':'linux', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as response:
+            print(response.status)
+            print(response.headers)
+            print(await response.json())
     async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
         ip = (await response.json()).get('properties').get('ipAddress')
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt update

@@ -99,9 +99,6 @@ async def main():
         async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
             token = (await response.json()).get('access_token')
             await win(session, token)
-            #async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(json.dump(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token))).encode()).decode()}) as _: pass
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(json.dump(await asyncio.gather(gcloud(session))).encode()).decode()}) as _: pass
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
+            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/0', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
-#asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))
 asyncio.run(main())

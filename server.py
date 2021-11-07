@@ -69,7 +69,7 @@ async def gcloud(session):
             if response.status == 404: break
     async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
     async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/f1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
-    await asyncio.sleep(30)
+    await asyncio.sleep(15)
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
         await asyncio.sleep(45)
@@ -123,7 +123,7 @@ async def linux(session, token):
                    if (await _.json()).get('status') == 'Succeeded': break
     async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
         ip = (await response.json()).get('properties').get('ipAddress')
-        await asyncio.sleep(60)
+        await asyncio.sleep(45)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
         return ip
 #ssh-keygen -f azure -N ''

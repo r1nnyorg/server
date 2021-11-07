@@ -46,8 +46,8 @@ import google.auth, google.auth.transport.requests, google.oauth2, builtins
 credentials = google.oauth2.service_account.Credentials.from_service_account_file('gcloud', scopes=['https://www.googleapis.com/auth/cloud-platform'])
 auth_req = google.auth.transport.requests.Request()
 credentials.refresh(auth_req)
-project='chaowenguo'
-zone='us-central1-a'
+project = 'chaowenguo'
+zone = 'us-central1-a'
 
 async def gcloud(session):
     instance = f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances'
@@ -75,7 +75,7 @@ sudo chmod 757 $encrypt''')
 #gcloud compute firewall-rules create FooService --allow=tcp:443
 #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
 
-subscription='9046396e-e215-4cc5-9eb7-e25370140233'
+subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

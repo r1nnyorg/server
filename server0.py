@@ -5,6 +5,8 @@ parser.add_argument('github')
 parser.add_argument('password')
 args = parser.parse_args()
 subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
+key = asyncssh.generate_private_key('ssh-rsa')
+key.write_private_key('key')
 
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

@@ -11,6 +11,7 @@ computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(com
 #for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).data: computeClientCompositeOperations.terminate_instance_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_TERMINATED])
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
+for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_route_table_and_wait_for_state(_.id, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_TERMINATED])
 for _ in virtualNetworkClient.list_internet_gateways(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_internet_gateway_and_wait_for_state(_.id, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_TERMINATED])
 for _ in virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_subnet_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_TERMINATED])
 for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_vcn_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_TERMINATED])
@@ -197,7 +198,7 @@ async def main():
             token = (await response.json()).get('access_token')
             await win(session, token)
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token))).encode()).decode()}) as _: pass
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
+            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: passdelete_route_table_and_wait_for_state
 
 #asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))
 asyncio.run(main())

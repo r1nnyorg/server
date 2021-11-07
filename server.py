@@ -188,7 +188,7 @@ async def win(session, token):
 #    az group delete -n wi -y
 #fi
 #az group create -n win -l westus
-#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password HL798820y+HL798820y+ --os-disk-size-gb 64
+#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64
 #az vm open-port -g win -n win --port 22
                     
 async def main():

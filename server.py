@@ -128,6 +128,17 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
         return ip
+#if `az group exists -n linux`
+#then
+#    az group delete -n linux -y
+#fi
+#az group create -n linux -l westus
+#az vm image list --offer UbuntuServer --all --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#understand-vm-images
+#az vm list-sizes --location westus --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#find-available-vm-sizes
+#az vm create -n linux -g linux --image Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest --size Standard_B1s --admin-username ubuntu --generate-ssh-keys --os-disk-size-gb 64
+#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
+#az vm open-port -g linux -n linux --port 443
+#az vm show -d -g linux -n linux --query publicIps -o tsv
 
 async def win(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/win?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:

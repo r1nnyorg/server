@@ -1,6 +1,6 @@
-import asyncssh, aiohttp, asyncio, base64, argparse, pathlib, json
+import asyncssh, aiohttp, asyncio, base64, argparse, pathlib
 
-subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
+subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
 async def linux(session, token):
     async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
@@ -96,7 +96,7 @@ async def win(session, token):
                     
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
+        async with session.post(f'https://login.microsoftonline.com/deb7ba76-72fc-4c07-833f-1628b5e92168/oauth2/token', data={'grant_type':'client_credentials', 'client_id':'60f0699c-a6da-4a59-be81-fd413d2c68bc', 'client_secret':'ljEw3qnk.HcDcd85aSBLgjdJ4uA~bqPKYz', 'resource':'https://management.azure.com/'}) as response:
             token = (await response.json()).get('access_token')
             await win(session, token)
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/0', headers={'authorization':f'token {parser.parse_args().github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass

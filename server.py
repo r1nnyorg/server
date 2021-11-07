@@ -42,7 +42,7 @@ sudo chmod 757 $encrypt'''
 async def oracle(): 
     instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
-    await asyncio.sleep(45)
+    await asyncio.sleep(60)
     async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
     return ip
 
@@ -64,7 +64,7 @@ async def gcloud(session):
         if response == 200:
             async with session.delete(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
     while True:
-        await asyncio.sleep(45)
+        await asyncio.sleep(60)
         async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
             if response.status == 404: break
     async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
@@ -72,7 +72,7 @@ async def gcloud(session):
     await asyncio.sleep(5)
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
-        await asyncio.sleep(45)
+        await asyncio.sleep(60)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run(init)
         return ip
 #ssh-keygen -f google -N ''
@@ -123,7 +123,7 @@ async def linux(session, token):
                    if (await _.json()).get('status') == 'Succeeded': break
     async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
         ip = (await response.json()).get('properties').get('ipAddress')
-        await asyncio.sleep(45)
+        await asyncio.sleep(60)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
         return ip
 #ssh-keygen -f azure -N ''

@@ -11,6 +11,7 @@ computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(com
 #for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).data: computeClientCompositeOperations.terminate_instance_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_TERMINATED])
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
+for _ in virtualNetworkClient.list_internet_gateways(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_internet_gateway_and_wait_for_state(_.id, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_TERMINATED])
 for _ in virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_subnet_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_TERMINATED])
 for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_vcn_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_TERMINATED])
 createVcnDetails = oci.core.models.CreateVcnDetails(compartment_id=configure.get('tenancy'), cidr_block='10.0.0.0/16')

@@ -198,7 +198,7 @@ async def main():
             token = (await response.json()).get('access_token')
             await win(session, token)
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token))).encode()).decode()}) as _: pass
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: passdelete_route_table_and_wait_for_state
+            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 #asyncio.get_event_loop().run_until_complete(asyncio.gather(main(), main()))
 asyncio.run(main())

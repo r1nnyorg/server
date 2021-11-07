@@ -72,6 +72,7 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
         return ip
+#ssh-keygen -f google -N ''
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute firewall-rules create FooService --allow=tcp:443
 #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
@@ -128,6 +129,7 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
         return ip
+#ssh-keygen -f azure -N ''
 #if `az group exists -n linux`
 #then
 #    az group delete -n linux -y

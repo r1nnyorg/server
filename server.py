@@ -170,14 +170,11 @@ async def win(session, token):
                     async with session.get(interface.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2019-datacenter-core-with-containers-smalldisk-g2', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}}) as machine:
-                print(machine.status)
-                print(machine.headers)
-                print(await machine.json())
-                #if machine.status == 201:
-                #    while True:
-                #        await asyncio.sleep(int(machine.headers.get('retry-after')))
-                #        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                #            if (await _.json()).get('status') == 'Succeeded': break
+                if machine.status == 201:
+                    while True:
+                        await asyncio.sleep(int(machine.headers.get('retry-after')))
+                        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                            if (await _.json()).get('status') == 'Succeeded': break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Network/networkSecurityGroups/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'securityRules':[{'name':'win', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
         if security.status == 201:
             while True:

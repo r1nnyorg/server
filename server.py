@@ -42,7 +42,7 @@ sudo chmod 757 $encrypt'''
 async def oracle(): 
     instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
-    await asyncio.sleep(60)
+    await asyncio.sleep(45)
     async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
     return ip
 
@@ -64,16 +64,15 @@ async def gcloud(session):
         if response == 200:
             async with session.delete(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
     while True:
-        await asyncio.sleep(60)
+        await asyncio.sleep(45)
         async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
             if response.status == 404: break
     async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
     async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/f1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
-    await asyncio.sleep(60)
+    await asyncio.sleep(30)
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
-        ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].keys() #.get('natIP')
-        print(ip, flush=True)
-        await asyncio.sleep(60)
+        ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
+        await asyncio.sleep(45)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run(init)
         return ip
 #ssh-keygen -f google -N ''

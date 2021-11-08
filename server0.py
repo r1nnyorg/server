@@ -71,7 +71,7 @@ async def win(session, token, network):
                 await asyncio.sleep(10)
                 async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                    if (await _.json()).get('status') == 'Succeeded': break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Network/networkSecurityGroups/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'securityRules':[{'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/westus2/providers/Microsoft.Network/networkSecurityGroups/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'securityRules':[{'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
         if security.status == 201:
             while True:
                 await asyncio.sleep(int(security.headers.get('retry-after')))

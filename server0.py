@@ -82,15 +82,15 @@ async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://login.microsoftonline.com/deb7ba76-72fc-4c07-833f-1628b5e92168/oauth2/token', data={'grant_type':'client_credentials', 'client_id':'60f0699c-a6da-4a59-be81-fd413d2c68bc', 'client_secret':'ljEw3qnk.HcDcd85aSBLgjdJ4uA~bqPKYz', 'resource':'https://management.azure.com/'}) as response:
             token = (await response.json()).get('access_token')
-            async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/westus2?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
+            async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
                 if response.status == 204:
-                    async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/westus2?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
+                    async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
                         if response.status == 202:
                             while True:
                                 await asyncio.sleep(int(response.headers.get('retry-after')))
                                 async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/westus2?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as _: pass
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as _: pass
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/westus2?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'westus2', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
                 if network.status == 201:
                     while True:

@@ -67,7 +67,7 @@ async def win(session, token, network):
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
                         async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'mkdir c:/users/ubuntu/.ssh', f'Set-Content -Path c:/users/ubuntu/.ssh/authorized_keys -Value "{key.export_public_key().decode()}"']}) as response:
+    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'mkdir $HOME/.ssh', f'Set-Content -Path $HOME/.ssh/authorized_keys -Value "{key.export_public_key().decode()}"']}) as response:
         if response.status == 202:
             while True:
                 await asyncio.sleep(10)

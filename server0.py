@@ -68,7 +68,7 @@ async def win(session, token, network):
     async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/westus2/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', ' '.join(('echo', key.export_public_key().decode(), '> c:/users/ubuntu/.ssh/authorized_keys'))]}) as response:
         if response.status == 202:
             while True:
-                await asyncio.sleep(int(response.headers.get('retry-after')))
+                await asyncio.sleep(10)
                 async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                    if (await _.json()).get('status') == 'Succeeded': break
         print(await response.json())

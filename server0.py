@@ -59,7 +59,7 @@ async def win(session, token, network):
                     await asyncio.sleep(10)
                     async with session.get(interface.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/westus2/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2019-datacenter-core-with-containers-smalldisk-g2', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}}) as machine:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/westus2/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2022-datacenter-azure-edition-core-smalldisk', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}}) as machine:
                 if machine.status == 201:
                     while True:
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
@@ -88,7 +88,7 @@ async def main():
                         if response.status == 202:
                             while True:
                                 await asyncio.sleep(int(response.headers.get('retry-after')))
-                                async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
+                                async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:atacenter azure edition
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/westus2?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as _: pass
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/westus2/providers/Microsoft.Network/virtualNetworks/westus2?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'westus2', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
@@ -101,4 +101,3 @@ async def main():
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/0', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 asyncio.run(main())
-#

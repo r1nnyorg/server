@@ -101,4 +101,3 @@ async def main():
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/0', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 asyncio.run(main())
-#

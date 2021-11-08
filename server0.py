@@ -88,7 +88,7 @@ async def main():
                         if response.status == 202:
                             while True:
                                 await asyncio.sleep(int(response.headers.get('retry-after')))
-                                async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:atacenter azure edition
+                                async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/westus2?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as _: pass
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/westus2/providers/Microsoft.Network/virtualNetworks/westus2?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'westus2', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:

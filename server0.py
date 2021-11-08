@@ -65,7 +65,7 @@ async def win(session, token, network):
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
                         async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'mkdir c:/users/ubuntu/.ssh', ' '.join(('echo', key.export_public_key().decode(), '> c:/users/ubuntu/.ssh/authorized_keys'))]}) as response:
+    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'mkdir c:/users/ubuntu/.ssh', ' '.join(('echo', '1234', '> c:/users/ubuntu/.ssh/authorized_keys'))]}) as response:
         if response.status == 202:
             while True:
                 await asyncio.sleep(10)
@@ -91,7 +91,7 @@ async def main():
                                 async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as _: pass
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/westus2?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'westus2', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
                 if network.status == 201:
                     while True:
                         await asyncio.sleep(int(network.headers.get('retry-after')))

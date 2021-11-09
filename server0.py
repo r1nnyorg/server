@@ -11,7 +11,7 @@ key.write_private_key('key')
 print(f'Set-Content -Path c:/users/ubuntu/.ssh/authorized_keys -Value "{key.export_public_key().decode()}"')
 
 async def linux(session, token, network):
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as ip:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'zones':['1']}) as ip:
         if ip.status == 201:    
             while True:
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
@@ -24,9 +24,6 @@ async def linux(session, token, network):
                     async with session.get(interface.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'linux', 'linuxConfiguration':{'ssh':{'publicKeys':[{'path':'/home/ubuntu/.ssh/authorized_keys', 'keyData':key.export_public_key().decode()}]}, 'disablePasswordAuthentication':True}}, 'storageProfile':{'imageReference':{'sku':'20_04-lts-gen2', 'publisher':'Canonical', 'version':'latest', 'offer':'0001-com-ubuntu-server-focal'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}, 'zones':['1']}) as machine:
-                print(machine.status)
-                print(machine.headers)
-                print(await machine.json())
                 if machine.status == 201:
                     while True:
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
@@ -52,7 +49,7 @@ sudo chmod 757 $encrypt''')
         return ip
 
 async def win(session, token, network):
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as ip:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'zones':['2']}) as ip:
         if ip.status == 201:
             while True:
                 await asyncio.sleep(int(ip.headers.get('retry-after')))

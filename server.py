@@ -32,7 +32,6 @@ createNetworkSecurityGroupDetails = oci.core.models.CreateNetworkSecurityGroupDe
 #virtualNetworkClient.add_network_security_group_security_rules(security.id, addSecurityRulesDetails)
 key = asyncssh.generate_private_key('ssh-rsa')
 key.write_private_key('key')
-launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04 Minimal').data[0].id, subnet_id=subnet.id)
 
 init = '''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -42,11 +41,27 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt'''
 
-async def oracle(): 
+async def oracle():
+    launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.E2.1.Micro', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04 Minimal').data[0].id, subnet_id=subnet.id)
     instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
     await asyncio.sleep(60)
     async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
+    return ip
+
+async def arm():
+    launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.A1.Flex', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04').data[0].id, subnet_id=subnet.id, shape_config=oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=4))
+    instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
+    ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
+    await asyncio.sleep(45)
+    async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
+sudo apt update
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
+rm google-chrome-stable_current_amd64.deb
+encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
+sudo mkdir -p $encrypt
+sudo chmod 757 $encrypt''')
     return ip
 
 import google.auth, google.auth.transport.requests, google.oauth2, builtins

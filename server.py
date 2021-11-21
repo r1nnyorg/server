@@ -56,9 +56,8 @@ async def arm():
     await asyncio.sleep(45)
     async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
 sudo apt update
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
-rm google-chrome-stable_current_amd64.deb
+sudo add-apt-repository ppa:saiarcot895/chromium-beta
+sudo apt install -y --no-install-recommends docker.io chromium-browser libx11-xcb1 x2goserver-xsession
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')

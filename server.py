@@ -199,8 +199,7 @@ async def main():
                         await asyncio.sleep(int(network.headers.get('retry-after')))
                         async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={
-  "location": "eastus",
+                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus',
   "properties": {
     "frontendIPConfigurations": [
       {
@@ -223,7 +222,7 @@ async def main():
         "name": "rulelb",
         "properties": {
           "frontendIPConfiguration": {
-            "id": "/subscriptions/subid/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb"
+            "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb"
           },
           "frontendPort": 443,
           "backendPort": 443,
@@ -233,10 +232,10 @@ async def main():
           "enableTcpReset": False,
           "loadDistribution": "Default",
           "backendAddressPool": {
-            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/loadBalancers/lb/backendAddressPools/be-lb"
+            "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/backendAddressPools/be-lb"
           },
           "probe": {
-            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/loadBalancers/lb/probes/probe-lb"
+            "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/probes/probe-lb"
           }
         }
       }
@@ -254,8 +253,7 @@ async def main():
       }
     ]
   }
-}) as response:
-      
+}) as response: print(response.status, await response.json())
             await win(session, token, network)
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, network))).encode()).decode()}) as _: pass
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass

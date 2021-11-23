@@ -197,16 +197,7 @@ async def main():
                 subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'standard'},
   "properties": {
-    "frontendIPConfigurations": [
-      {
-        "name": "fe-lb",
-        "properties": {
-          "subnet": {
-            "id": subnet
-          }
-        }
-      }
-    ],
+    "frontendIPConfigurations": [{'name':'fe-lb', 'properties':{'subnet':{'id':subnet}}}],
     "backendAddressPools": [
       {
         "name": "be-lb",

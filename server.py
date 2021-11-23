@@ -150,6 +150,7 @@ async def win(session, token, subnet, availabilitySets):
                     async with session.get(interface.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2019-datacenter-core-with-containers-smalldisk-g2', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}, 'availabilitySets':{'id':availabilitySets}}}) as machine:
+                print(await machine.json())
                 if machine.status == 201:
                     while True:
                         await asyncio.sleep(int(machine.headers.get('retry-after')))

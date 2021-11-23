@@ -199,7 +199,7 @@ async def main():
                         await asyncio.sleep(int(network.headers.get('retry-after')))
                         async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus',
+                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'sku':{'name':'standard'},
   "properties": {
     "frontendIPConfigurations": [
       {
@@ -245,7 +245,7 @@ async def main():
         "name": "probe-lb",
         "properties": {
           "protocol": "Https",
-          "port": 443,
+          "port": 443,machine
           "requestPath": "healthcheck.aspx",
           "intervalInSeconds": 15,
           "numberOfProbes": 2

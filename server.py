@@ -199,7 +199,7 @@ async def main():
                         await asyncio.sleep(int(network.headers.get('retry-after')))
                         async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-                subset = (await network.json()).get('properties').get('subnets')[0].get('id')
+                subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
                 print(subnet)
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'sku':{'name':'standard'},
   "properties": {

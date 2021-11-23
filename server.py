@@ -198,10 +198,8 @@ async def main():
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'standard'},
   "properties": {
     "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'subnet':{'id':subnet}}}],
-    "backendAddressPools":[{"name":"be-lb"}],
-    "loadBalancingRules": [
-      {
-        "name": "rulelb",
+    "backendAddressPools":[{'name':"be-lb"}],
+    "loadBalancingRules": [{'name':'rulelb',
         "properties": {
           "frontendIPConfiguration": {
             "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb"
@@ -213,12 +211,8 @@ async def main():
           "protocol": "Tcp",
           "enableTcpReset": False,
           "loadDistribution": "Default",
-          "backendAddressPool": {
-            "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/backendAddressPools/be-lb"
-          },
-          "probe": {
-            "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/probes/probe-lb"
-          }
+          "backendAddressPool": {"id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/backendAddressPools/be-lb"},
+          "probe": {"id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/probes/probe-lb"}
         }
       }
     ],

@@ -138,7 +138,6 @@ async def linux(session, token, subnet):
 
 async def win(session, token, subnet):
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus'}) as ip:
-        print(await ip.json())
         if ip.status == 201:
             while True:
                 await asyncio.sleep(int(ip.headers.get('retry-after')))

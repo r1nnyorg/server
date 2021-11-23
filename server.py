@@ -100,7 +100,7 @@ async def gcloud(session):
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 
 async def linux(session, token, subnet):
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'zones':['1']}) as ip:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'sku':{'name':'standard'} 'zones':['1']}) as ip:
         if ip.status == 201:
             while True:
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
@@ -137,7 +137,7 @@ async def linux(session, token, subnet):
 #az vm show -d -g linux -n linux --query publicIps -o tsv
 
 async def win(session, token, subnet):
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'zones':['2']}) as ip:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'sku':{'name':'standard'}, 'zones':['2']}) as ip:
         print(await ip.json())
         if ip.status == 201:
             while True:

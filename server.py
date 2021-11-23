@@ -198,7 +198,7 @@ async def main():
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'standard'},
   "properties": {
     "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'subnet':{'id':subnet}}}],
-    "backendAddressPools":[{"name":"be-lb","properties":{}}],
+    "backendAddressPools":[{"name":"be-lb"}],
     "loadBalancingRules": [
       {
         "name": "rulelb",
@@ -230,7 +230,7 @@ async def main():
           "port": 443,
           "requestPath": "healthcheck.aspx",
           "intervalInSeconds": 15,
-          "numberOfProbes": 2availabilitySets
+          "numberOfProbes": 2
         }
       }
     ]

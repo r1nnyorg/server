@@ -155,13 +155,13 @@ async def win(session, token, network):
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
                         async with session.get(machine.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'Install-Module -Name DockerMsftProvider -Repository PSGallery -Force', 'Install-Package -Name docker -ProviderName DockerMsftProvider -Force', 'Restart-Computer -Force']}) as response:
+    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'Install-Module -Name DockerMsftProvider -Repository PSGallery -Force', 'Install-Package -Name docker -ProviderName DockerMsftProvider -Force']}) as response:
         if response.status == 202:
             while True:
                 await asyncio.sleep(10)
                 async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                    if (await _.json()).get('status') == 'Succeeded': break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkSecurityGroups/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'securityRules':[{'name':'https', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}, {'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkSecurityGroups/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'securityRules':[{'name':'https', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}, {'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':131, 'direction':'Inbound'}}]}}) as security:
         if security.status == 201:
             while True:
                 await asyncio.sleep(int(security.headers.get('retry-after')))
@@ -255,7 +255,7 @@ async def main():
   }
 }) as response: print(response.status, await response.json())
             await win(session, token, network)
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, network))).encode()).decode()}) as _: pass
+            #async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, network))).encode()).decode()}) as _: pass
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 asyncio.run(main())

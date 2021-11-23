@@ -212,7 +212,7 @@ async def main():
     "probes": [{"name": "probe-lb", "properties": {"protocol": "Https", "port": 443, "requestPath": "healthcheck.aspx", "intervalInSeconds": 15, "numberOfProbes": 2}}]
   }
 }) as response: print(response.status, await response.json())
-                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}}) as response:
+                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}, 'properties':{'platformFaultDomainCount':2}}) as response:
                     availabilitySet = await response.json()
                     print(availabilitySet)
                     await win(session, token, subnet, availabilitySet)

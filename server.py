@@ -106,7 +106,7 @@ async def linux(session, token, subnet, availabilitySet):
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
                 async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}, 'gatewayLoadBalancer':{'id':f'/subscriptions/subid/resourceGroups/{subscription}/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb'}}}]}}) as interface:
+        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}, 'gatewayLoadBalancer':{'id':f'/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb'}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)
@@ -143,7 +143,7 @@ async def win(session, token, subnet, availabilitySet):
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
                 async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}, 'gatewayLoadBalancer':{'id':f'/subscriptions/subid/resourceGroups/{subscription}/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb'}}}]}}) as interface:
+        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}, 'gatewayLoadBalancer':{'id':f'/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb'}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)
@@ -202,7 +202,7 @@ async def main():
                 subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'standard'},
   "properties": {
-    "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}}}],
+    "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}}}],
     "backendAddressPools":[{'name':"be-lb"}],
     "loadBalancingRules": [{'name':'rulelb',
         "properties": {

@@ -106,7 +106,7 @@ async def linux(session, token, subnet, availabilitySet):
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
                 async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}}}]}}) as interface:
+        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}, 'gatewayLoadBalancer':{'id':f'/subscriptions/subid/resourceGroups/{subscription}/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb'}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)
@@ -143,7 +143,7 @@ async def win(session, token, subnet, availabilitySet):
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
                 async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}}}]}}) as interface:
+        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}, 'gatewayLoadBalancer':{'id':f'/subscriptions/subid/resourceGroups/{subscription}/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb'}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)
@@ -188,7 +188,12 @@ async def main():
                                 async with session.get(response.headers.get('location'), headers={'authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus'}) as ip, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network::
+                if ip.status == 201:
+                    while True:
+                        await asyncio.sleep(int(ip.headers.get('retry-after')))
+                        async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
+                            if (await _.json()).get('status') == 'Succeeded': break 
                 if network.status == 201:
                     while True:
                         await asyncio.sleep(int(network.headers.get('retry-after')))
@@ -197,7 +202,7 @@ async def main():
                 subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'standard'},
   "properties": {
-    "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'subnet':{'id':subnet}}}],
+    "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}}}],
     "backendAddressPools":[{'name':"be-lb"}],
     "loadBalancingRules": [{'name':'rulelb',
         "properties": {

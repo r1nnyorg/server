@@ -256,7 +256,7 @@ async def main():
     ]
   }
 }) as response: print(response.status, await response.json())
-            await session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus'}) as response: print(response.status, await response.json())
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus'}) as response: print(response.status, await response.json())
             await win(session, token, subnet)
             #async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, subnet))).encode()).decode()}) as _: pass
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass

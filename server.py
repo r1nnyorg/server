@@ -245,7 +245,7 @@ async def main():
         "name": "probe-lb",
         "properties": {
           "protocol": "Https",
-          "port": 443,machine
+          "port": 443,
           "requestPath": "healthcheck.aspx",
           "intervalInSeconds": 15,
           "numberOfProbes": 2

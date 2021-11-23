@@ -202,16 +202,8 @@ async def main():
     "backendAddressPools":[{'name':"be-lb"}],
     "loadBalancingRules": [{'name':'rulelb',
         "properties": {
-          "frontendIPConfiguration": {
-            "id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb"
-          },
-          "frontendPort": 443,
-          "backendPort": 443,
-          "enableFloatingIP": True,
-          "idleTimeoutInMinutes": 15,
-          "protocol": "Tcp",
-          "enableTcpReset": False,
-          "loadDistribution": "Default",
+          "frontendIPConfiguration": {"id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb"},
+          "frontendPort": 443, "backendPort": 443, "enableFloatingIP": True, "idleTimeoutInMinutes": 15, "protocol": "Tcp", "enableTcpReset": False, "loadDistribution": "Default",
           "backendAddressPool": {"id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/backendAddressPools/be-lb"},
           "probe": {"id": f"/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/probes/probe-lb"}
         }

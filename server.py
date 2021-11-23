@@ -213,7 +213,7 @@ async def main():
   }
 }) as response: print(response.status, await response.json())
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}}) as response:
-                    availabilitySet = (await response.json()).get('id')
+                    availabilitySet = await response.json()
                     print(availabilitySet)
                     await win(session, token, subnet, availabilitySet)
                     #async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, subnet, availabilitySets))).encode()).decode()}) as _: pass

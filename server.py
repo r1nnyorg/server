@@ -99,46 +99,26 @@ async def gcloud(session):
 
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 
-async def linux(session, token):
-    async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-        if response.status == 204:
-            async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-                if response.status == 202:
-                    while True:
-                        await asyncio.sleep(int(response.headers.get('retry-after')))
-                        async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
-                            if _.status == 200: break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/linux?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as ip, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/virtualNetworks/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'linux', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+async def linux(session, token, network):
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'zones':['1']}) as ip:
         if ip.status == 201:
             while True:
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
-                async with session.get(ip.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-        if network.status == 201:
-            while True:
-                await asyncio.sleep(int(network.headers.get('retry-after')))
-                async with session.get(network.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                    if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
+        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)
-                    async with session.get(interface.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                    async with session.get(interface.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'linux', 'linuxConfiguration':{'ssh':{'publicKeys':[{'path':'/home/ubuntu/.ssh/authorized_keys', 'keyData':key.export_public_key().decode()}]}, 'disablePasswordAuthentication':True}}, 'storageProfile':{'imageReference':{'sku':'20_04-lts-gen2', 'publisher':'Canonical', 'version':'latest', 'offer':'0001-com-ubuntu-server-focal'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}}) as machine:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'linux', 'linuxConfiguration':{'ssh':{'publicKeys':[{'path':'/home/ubuntu/.ssh/authorized_keys', 'keyData':key.export_public_key().decode()}]}, 'disablePasswordAuthentication':True}}, 'storageProfile':{'imageReference':{'sku':'20_04-lts-gen2', 'publisher':'Canonical', 'version':'latest', 'offer':'0001-com-ubuntu-server-focal'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}, 'zones':['1']}) as machine:
                 if machine.status == 201:
                     while True:
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
-                        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/networkSecurityGroups/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'securityRules':[{'name':'https', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
-        if security.status == 201:
-            while True:
-                await asyncio.sleep(int(security.headers.get('retry-after')))
-                async with session.get(security.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                   if (await _.json()).get('status') == 'Succeeded': break
-    async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/linux/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
+    async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}) as response:
         ip = (await response.json()).get('properties').get('ipAddress')
         await asyncio.sleep(60)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
@@ -156,44 +136,36 @@ async def linux(session, token):
 #az vm open-port -g linux -n linux --port 443
 #az vm show -d -g linux -n linux --query publicIps -o tsv
 
-async def win(session, token):
-    async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/win?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-        if response.status == 204:
-            async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/win?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-                if response.status == 202:
-                    while True:
-                        await asyncio.sleep(int(response.headers.get('retry-after')))
-                        async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
-                            if _.status == 200: break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/win?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus'}) as ip, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Network/virtualNetworks/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'win', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+async def win(session, token, network):
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'zones':['2']}) as ip:
         if ip.status == 201:
             while True:
                 await asyncio.sleep(int(ip.headers.get('retry-after')))
-                async with session.get(ip.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
-        if network.status == 201:
-            while True:
-                await asyncio.sleep(int(network.headers.get('retry-after')))
-                async with session.get(network.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                    if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
+        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)
-                    async with session.get(interface.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                    async with session.get(interface.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2019-datacenter-core-with-containers-smalldisk-g2', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}}) as machine:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2019-datacenter-core-with-containers-smalldisk-g2', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}, 'zones':['2']}) as machine:
                 if machine.status == 201:
                     while True:
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
-                        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/win/providers/Microsoft.Network/networkSecurityGroups/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'securityRules':[{'name':'https', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
+    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'Install-Module -Name DockerMsftProvider -Repository PSGallery -Force', 'Install-Package -Name docker -ProviderName DockerMsftProvider -Force', 'Restart-Computer -Force']}) as response:
+        if response.status == 202:
+            while True:
+                await asyncio.sleep(10)
+                async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                   if (await _.json()).get('status') == 'Succeeded': break
+    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkSecurityGroups/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'securityRules':[{'name':'https', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}, {'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
         if security.status == 201:
             while True:
                 await asyncio.sleep(int(security.headers.get('retry-after')))
-                async with session.get(security.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                async with session.get(security.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                    if (await _.json()).get('status') == 'Succeeded': break
 #if `az group exists -n win`
 #then
@@ -207,8 +179,23 @@ async def main():
     async with aiohttp.ClientSession() as session:
         async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
             token = (await response.json()).get('access_token')
-            await win(session, token)
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token))).encode()).decode()}) as _: pass
+            async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'authorization':f'Bearer {token}'}) as response:
+                if response.status == 204:
+                    async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'authorization':f'Bearer {token}'}) as response:
+                        if response.status == 202:
+                            while True:
+                                await asyncio.sleep(int(response.headers.get('retry-after')))
+                                async with session.get(response.headers.get('location'), headers={'authorization':f'Bearer {token}'}) as _:
+                                    if _.status == 200: break
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus'}) as _: pass
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+                if network.status == 201:
+                    while True:
+                        await asyncio.sleep(int(network.headers.get('retry-after')))
+                        async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
+                            if (await _.json()).get('status') == 'Succeeded': break
+            await win(session, token, network)
+            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, network))).encode()).decode()}) as _: pass
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 asyncio.run(main())

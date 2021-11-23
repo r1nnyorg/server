@@ -188,12 +188,74 @@ async def main():
                                 async with session.get(response.headers.get('location'), headers={'authorization':f'Bearer {token}'}) as _:
                                     if _.status == 200: break
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus'}) as _: pass
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus'}) as ip, session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'eastus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+                if ip.status == 201:
+                    while True:
+                        await asyncio.sleep(int(ip.headers.get('retry-after')))
+                        async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
+                            if (await _.json()).get('status') == 'Succeeded': break
                 if network.status == 201:
                     while True:
                         await asyncio.sleep(int(network.headers.get('retry-after')))
                         async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
+                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={
+  "location": "eastus",
+  "properties": {
+    "frontendIPConfigurations": [
+      {
+        "name": "fe-lb",
+        "properties": {
+          "subnet": {
+            "id": (await network.json()).get('properties').get('subnets')[0].get('id')
+          }
+        }
+      }
+    ],
+    "backendAddressPools": [
+      {
+        "name": "be-lb",
+        "properties": {}
+      }
+    ],
+    "loadBalancingRules": [
+      {
+        "name": "rulelb",
+        "properties": {
+          "frontendIPConfiguration": {
+            "id": "/subscriptions/subid/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine/frontendIPConfigurations/fe-lb"
+          },
+          "frontendPort": 443,
+          "backendPort": 443,
+          "enableFloatingIP": True,
+          "idleTimeoutInMinutes": 15,
+          "protocol": "Tcp",
+          "enableTcpReset": False,
+          "loadDistribution": "Default",
+          "backendAddressPool": {
+            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/loadBalancers/lb/backendAddressPools/be-lb"
+          },
+          "probe": {
+            "id": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/loadBalancers/lb/probes/probe-lb"
+          }
+        }
+      }
+    ],
+    "probes": [
+      {
+        "name": "probe-lb",
+        "properties": {
+          "protocol": "Https",
+          "port": 443,
+          "requestPath": "healthcheck.aspx",
+          "intervalInSeconds": 15,
+          "numberOfProbes": 2
+        }
+      }
+    ]
+  }
+}) as response:
+      
             await win(session, token, network)
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, network))).encode()).decode()}) as _: pass
             async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass

@@ -12,12 +12,16 @@ jobs:
         - uses: actions/setup-python@main
           with:
               python-version: 3.x
+        - uses: actions/setup-node@main
+          with:
+              node-version: 17.x
         - run: |
               echo '${{secrets.OCI}}' > oci.key
               echo '${{secrets.GCLOUD}}' > gcloud
-              pip install oci asyncssh aiohttp google-auth requests
-              python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
-              #python server0.py ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
+              #pip install oci asyncssh aiohttp google-auth requests
+              #python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
+              curl https://${GITHUB_REPOSITORY%/*}.github.io/common/package.json > package.json
+              node server.js ${{secrets.PASSWORD}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142

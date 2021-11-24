@@ -24,7 +24,9 @@ async function linux(token, subnet)
             if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
         }
     }
-    const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{hardwareProfile:{vmSize:'Standard_B1s'}, osProfile:{adminUsername:'ubuntu', computerName:'linux', linuxConfiguration:{ssh:{publicKeys:[{path:'/home/ubuntu/.ssh/authorized_keys', keyData:await new SSH2Promise({host:(await fetch('https://raw.githubusercontent.com/chaowenGUO/key/main/ip', {headers:{authorization:`token ${process.argv.at(2)}`}}).then(_ => _.json())).at(0), username:'ubuntu', identity:'key'}).exec('cat /home/ubuntu/.ssh/authorized_keys')}]}, disablePasswordAuthentication:true}}, storageProfile:{imageReference:{sku:'20_04-lts-gen2', publisher:'Canonical', version:'latest', offer:'0001-com-ubuntu-server-focal'}, osDisk:{diskSizeGB:64, createOption:'FromImage'}}, networkProfile:{networkInterfaces:[{id:(await networkInterface.json()).id}]}}})})
+    let ssh = new SSH2Promise({host:(await fetch('https://raw.githubusercontent.com/chaowenGUO/key/main/ip', {headers:{authorization:`token ${process.argv.at(2)}`}}).then(_ => _.json())).at(0), username:'ubuntu', identity:'key'})
+    const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{hardwareProfile:{vmSize:'Standard_B1s'}, osProfile:{adminUsername:'ubuntu', computerName:'linux', linuxConfiguration:{ssh:{publicKeys:[{path:'/home/ubuntu/.ssh/authorized_keys', keyData:await ssh.exec('cat /home/ubuntu/.ssh/authorized_keys')}]}, disablePasswordAuthentication:true}}, storageProfile:{imageReference:{sku:'20_04-lts-gen2', publisher:'Canonical', version:'latest', offer:'0001-com-ubuntu-server-focal'}, osDisk:{diskSizeGB:64, createOption:'FromImage'}}, networkProfile:{networkInterfaces:[{id:(await networkInterface.json()).id}]}}})})
+    ssh.close()
     if (globalThis.Object.is(machine.status, 201))
     {
         while (true)
@@ -36,9 +38,8 @@ async function linux(token, subnet)
     const response = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {headers:{authorization:`Bearer ${token}`}})
     ip = (await response.json()).properties.ipAddress
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
-    try
-    {
-        await new SSH2Promise({host:ip, username:'ubuntu', identity:'key'}).exec(`sudo apt purge -y snapd
+    ssh = new SSH2Promise({host:ip, username:'ubuntu', identity:'key'})
+    await ssh.exec(`sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
@@ -46,8 +47,7 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`)
-    }
-    catch (e) {console.log(e.toString())}
+    ssh.close()
     return ip
 }
                                                                                                                        

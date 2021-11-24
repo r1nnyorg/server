@@ -120,7 +120,7 @@ if (globalThis.Object.is(network.status, 201))
 {
     while (true)
     {
-        await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
+        await new globalThis.Promise(_ => globalThis.setTimeout(_, response.headers.get('retry-after') * 1000))
         if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.httpsjson())).status, 'Succeeded')) break
     }
 }

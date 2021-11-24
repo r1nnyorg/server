@@ -3,6 +3,8 @@ import process from 'process'
 
 const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
+const pub = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpttWlJYLEBUOT7o91vcTseokhu/6xMFwxbvzZ4fy7LMOfayoDILcQE7z4eXUXNI3CnGOhZa+k1M+InwzTe75g6SjiaTbd6D8BqYIUV1LlnO0HEf+/9Sv8mSl6ri7S25+PGZOu4NvXpiYVbQSMFt6jekqMQCeRVTgJ0Dv8ub1ry7cCU3dUQUdJW4ZjXhbyfuOzgZzUCx+xSfgwLYRooTPEs5KiigvHu7YZhC+qLEDb1moD/ymiOOrgpwk0ZDhC66zWUrOQLZ73jvhlS/N+QunnISbGEQTiTSh/Mnf7rzTpeRgcffp6fLsOwl0BIHCbeLk4BrH9EG2+DVTG6IeIZr7b'
+
 /*async function linux(token, subnet)
 {
     const ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})

@@ -39,9 +39,7 @@ async function linux(token, subnet)
     ip = (await response.json()).properties.ipAddress
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
     ssh = new SSH2Promise({host:ip, username:'ubuntu', identity:'key'})
-    try
-    {
-    await ssh.exec(`sudo apt purge -y snapd
+    await ssh.shell(`sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
@@ -49,8 +47,6 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`)
-    }
-    catch (e) {console.log(e.toString())}
     ssh.close()
     return ip
 }

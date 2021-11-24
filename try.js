@@ -4,7 +4,7 @@ const ssh = new SSH2Promise({host:'20.114.38.59', username:'ubuntu', identity:'k
 try
 {
 console.log(await ssh.exec(`whoami
-sudo apt update`))
+sudo apt-get update`))
 }
 catch (e) {console.log(e.toString('utf8'))}
 ssh.close()

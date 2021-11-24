@@ -1,11 +1,7 @@
 import fetch from 'node-fetch'
+import process from 'process'
 
-parser = argparse.ArgumentParser()
-parser.add_argument('password')
-args = parser.parse_args()
 const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
-key = asyncssh.generate_private_key('ssh-rsa')
-key.write_private_key('key')
 
 print(f'Set-Content -Path c:/users/ubuntu/.ssh/authorized_keys -Value "{key.export_public_key().decode()}"')
 
@@ -29,6 +25,7 @@ async function linux(token, subnet)
             if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
         }
     }
+    const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01`)
             async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'linux', 'linuxConfiguration':{'ssh':{'publicKeys':[{'path':'/home/ubuntu/.ssh/authorized_keys', 'keyData':key.export_public_key().decode()}]}, 'disablePasswordAuthentication':True}}, 'storageProfile':{'imageReference':{'sku':'20_04-lts-gen2', 'publisher':'Canonical', 'version':'latest', 'offer':'0001-com-ubuntu-server-focal'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}, 'zones':['1']}) as machine:
                 if machine.status == 201:
                     while True:

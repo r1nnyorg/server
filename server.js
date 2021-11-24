@@ -17,7 +17,7 @@ async function linux(token, subnet)
         }
     }
     const networkInterface = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{ipConfigurations:[{name:'linux', properties:{publicIPAddress:{id:(await ip.json()).id}, subnet:{id:subnet}}}]}})})
-    if (globalThis.Object.is(interface.status, 201))
+    if (globalThis.Object.is(networkInterface.status, 201))
     {
         while (true)
         {

@@ -3,9 +3,7 @@ import process from 'process'
 
 const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
-print(f'Set-Content -Path c:/users/ubuntu/.ssh/authorized_keys -Value "{key.export_public_key().decode()}"')
-
-async function linux(token, subnet)
+/*async function linux(token, subnet)
 {
     const ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
     if (globalThis.Object.is(ip.status, 201))
@@ -50,7 +48,7 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
         return ip
-}
+}*/
                                                                                                                        
 async function win(token, subnet)
 {
@@ -63,36 +61,42 @@ async function win(token, subnet)
             if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
         }
     }
-    const interface = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01`, )
-        async with session.put(f'', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
-            if interface.status == 201:
-                while True:
-                    await asyncio.sleep(10)
-                    async with session.get(interface.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                        if (await _.json()).get('status') == 'Succeeded': break
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'hardwareProfile':{'vmSize':'Standard_B1s'}, 'osProfile':{'adminUsername':'ubuntu', 'computerName':'win', 'adminPassword':args.password}, 'storageProfile':{'imageReference':{'sku':'2022-datacenter-azure-edition-core-smalldisk', 'publisher':'MicrosoftWindowsServer', 'version':'latest', 'offer':'WindowsServer'}, 'osDisk':{'diskSizeGB':64, 'createOption':'FromImage'}}, 'networkProfile':{'networkInterfaces':[{'id':(await interface.json()).get('id')}]}}, 'zones':['2']}) as machine:
-                if machine.status == 201:
-                    while True:globalThis.JSON.stringify(
-                        await asyncio.sleep(int(machine.headers.get('retry-after')))
-                        async with session.get(machine.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                            if (await _.json()).get('status') == 'Succeeded': break
-    async with session.post(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01', headers={'Authorization':f'Bearer {token}'}, json={'commandId':'RunPowerShellScript', 'script':['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'Install-Module -Name DockerMsftProvider -Repository PSGallery -Force', 'Install-Package -Name docker -ProviderName DockerMsftProvider -Force', 'Restart-Computer -Force']}) as response:
-        if response.status == 202:
-            while True:
-                await asyncio.sleep(10)
-                async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                   if (await _.json()).get('status') == 'Succeeded': break
-    async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
-        ip = (await response.json()).get('properties').get('ipAddress')
-        await asyncio.sleep(60)
-        #async with asyncssh.connect(ip, username='ubuntu', password=args.password, known_hosts=None) as ssh: await ssh.run(f'''mkdir .ssh
-#echo {key.export_public_key().decode()} > %HOMEPATH%/.ssh/authorized_keys''')
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkSecurityGroups/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'securityRules':[{'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}]}}) as security:
-        if security.status == 201:
-            while True:
-                await asyncio.sleep(int(security.headers.get('retry-after')))
-                async with session.get(security.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                   if (await _.json()).get('status') == 'Succeeded': break
+    const interface = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{ipConfigurations:[{name:'win', properties:{publicIPAddress:{id:(await ip.json()).id}, subnet:{id:subnet}}}]}})})
+    if (globalThis.Object.is(interface.status, 201))
+    {
+        while (true)
+        {
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
+            if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        }
+    }
+    const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{hardwareProfile:{vmSize:'Standard_B1s'}, osProfile:{adminUsername:'ubuntu', computerName:'win', 'adminPassword':process.argv.at(2)}, storageProfile:{imageReference:{sku:'2022-datacenter-azure-edition-core-smalldisk', publisher:'MicrosoftWindowsServer', version:'latest', offer:'WindowsServer'}, osDisk:{diskSizeGB:64, createOption:'FromImage'}}, networkProfile:{networkInterfaces:[{id:(await interface.json()).id}]}}})})
+    if (globalThis.Object.is(machine.status, 201))
+    {
+        while (true)
+        {
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
+            if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        }
+    }
+    const response = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/win/runCommand?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({commandId:'RunPowerShellScript', script:['Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0', 'Start-Service sshd', 'Install-Module -Name DockerMsftProvider -Repository PSGallery -Force', 'Install-Package -Name docker -ProviderName DockerMsftProvider -Force', 'Restart-Computer -Force']})})
+    if (globalThis.Object.is(response.status, 202))
+    {
+        while (true)
+        {
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, 10 * 1000))
+            if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        }
+    }
+    const security = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/networkSecurityGroups/win?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{securityRules:[{name:'https', properties:{protocol:'*', sourceAddressPrefix:'*', destinationAddressPrefix:'*', access:'Allow', destinationPortRange:'443', sourcePortRange:'*', priority:130, direction:'Inbound'}}, {name:'ssh', properties:{protocol:'*', sourceAddressPrefix:'*', destinationAddressPrefix:'*', access:'Allow', destinationPortRange:'22', sourcePortRange:'*', priority:130, direction:'Inbound'}}]}})})
+    if (globalThis.Object.is(security.status, 201))
+    {
+        while (true)
+        {
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
+            if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        }
+    }
 }
 
 const token = (await fetch('https://login.microsoftonline.com/deb7ba76-72fc-4c07-833f-1628b5e92168/oauth2/token', {method:'post', body:new globalThis.URLSearchParams({grant_type:'client_credentials', client_id:'60f0699c-a6da-4a59-be81-fd413d2c68bc', client_secret:'ljEw3qnk.HcDcd85aSBLgjdJ4uA~bqPKYz', resource:'https://management.azure.com/'})}).then(_ => _.json())).access_token
@@ -117,8 +121,8 @@ if (globalThis.Object.is(network.status, 201))
     while (true)
     {
         await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
-        if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.httpsjson())).status, 'Succeeded')) break
     }
 }
 const subnet = (await network.json()).properties.subnets[0].id
-await global.Promise.all([win(token, subnet), linux(token, subnet)])
+await global.Promise.all([win(token, subnet)])

@@ -200,7 +200,7 @@ async def main():
                         async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
                 subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
-                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'standard'},
+                async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/loadBalancers/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus',
   "properties": {
     "frontendIPConfigurations":[{'name':'fe-lb', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}}}],
     "backendAddressPools":[{'name':"be-lb"}],

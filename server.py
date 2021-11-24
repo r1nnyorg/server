@@ -159,7 +159,7 @@ async def win(session, token, subnet, availabilitySet):
         if response.status == 202:
             while True:
                 await asyncio.sleep(10)
-                async with session.get(response.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
+                async with session.get(response.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                    if (await _.json()).get('status') == 'Succeeded': break
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkSecurityGroups/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'securityRules':[{'name':'https', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'443', 'sourcePortRange':'*', 'priority':130, 'direction':'Inbound'}}, {'name':'ssh', 'properties':{'protocol':'*', 'sourceAddressPrefix':'*', 'destinationAddressPrefix':'*', 'access':'Allow', 'destinationPortRange':'22', 'sourcePortRange':'*', 'priority':131, 'direction':'Inbound'}}]}}) as security:
         if security.status == 201:

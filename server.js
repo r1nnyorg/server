@@ -122,6 +122,5 @@ if (globalThis.Object.is(network.status, 201))
         if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
     }
 }
-console.log(await network.json())
 const subnet = (await network.json()).properties.subnets[0].id
 await global.Promise.all([win(token, subnet), linux(token, subnet)])

@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import process from 'process'
+import SSH2Promise from 'ssh2-promise'
 
 const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
@@ -35,9 +36,9 @@ async function linux(token, subnet)
         }
     }
     const response = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {headers:{authorization:`Bearer ${token}`}})
-    const ip = (await response.json()).properties.ipAddress
-        await asyncio.sleep(60)
-        async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run(`sudo apt purge -y snapd
+    await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
+    const ssh = new SSH2Promise({host:(await response.json()).properties.ipAddress, username:'ubuntu', identity:'key'})
+    await ssh.exec(`sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
@@ -45,7 +46,6 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`)
-        return ip
 }
                                                                                                                        
 async function win(token, subnet)
@@ -119,7 +119,7 @@ if (globalThis.Object.is(network.status, 201))
     while (true)
     {
         await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
-        if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        if (globalThis.O bject.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
     }
 }
 console.log(await network.json())

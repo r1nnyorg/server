@@ -107,7 +107,6 @@ async def linux(session, token, subnet, availabilitySet):
                 async with session.get(ip.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                     if (await _.json()).get('status') == 'Succeeded': break
         async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/linux?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'ipConfigurations':[{'name':'linux', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':subnet}}}]}}) as interface:
-            print(await interface.json())
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)

@@ -6,7 +6,7 @@ const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
 async function linux(token, subnet)
 {
-    const ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
+    let ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
     if (globalThis.Object.is(ip.status, 201))
     {
         while (true)
@@ -34,8 +34,9 @@ async function linux(token, subnet)
         }
     }
     const response = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {headers:{authorization:`Bearer ${token}`}})
+    ip = (await response.json()).properties.ipAddress
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
-    await new SSH2Promise({host:(await response.json()).properties.ipAddress, username:'ubuntu', identity:'key'}).exec(`sudo apt purge -y snapd
+    await new SSH2Promise({host:ip, username:'ubuntu', identity:'key'}).exec(`sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
@@ -43,6 +44,7 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`)
+    return ip
 }
                                                                                                                        
 async function win(token, subnet)
@@ -121,3 +123,4 @@ if (globalThis.Object.is(network.status, 201))
 }
 const subnet = (await network.json()).properties.subnets[0].id
 await global.Promise.all([win(token, subnet), linux(token, subnet)])
+await fetch('https://api.github.com/repos/chaowenGUO/key/contents/key', headers:{'authorization':`token {process.argv.at(2)}`}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass

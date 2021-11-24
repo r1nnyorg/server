@@ -54,13 +54,17 @@ sudo chmod 757 $encrypt''')
                                                                                                                        
 async function win(token, subnet)
 {
-    async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'zones':['2']}) as ip:
-        if ip.status == 201:
-            while True:
-                await asyncio.sleep(int(ip.headers.get('retry-after')))
-                async with session.get(ip.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                    if (await _.json()).get('status') == 'Succeeded': break
-        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
+    const ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/win?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
+    if (globalThis.Object.is(ip.status, 201))
+    {
+        while (true)
+        {
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
+            if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+        }
+    }
+    const interface = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/networkInterfaces/win?api-version=2021-03-01`, )
+        async with session.put(f'', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'ipConfigurations':[{'name':'win', 'properties':{'publicIPAddress':{'id':(await ip.json()).get('id')}, 'subnet':{'id':(await network.json()).get('properties').get('subnets')[0].get('id')}}}]}}) as interface:
             if interface.status == 201:
                 while True:
                     await asyncio.sleep(10)

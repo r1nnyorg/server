@@ -35,6 +35,7 @@ async function linux(token, subnet)
     }
     const response = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {headers:{authorization:`Bearer ${token}`}})
     ip = (await response.json()).properties.ipAddress
+    console.log(ip)
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
     await new SSH2Promise({host:ip, username:'ubuntu', identity:'key'}).exec(`sudo apt purge -y snapd
 sudo apt update

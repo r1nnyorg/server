@@ -123,4 +123,6 @@ if (globalThis.Object.is(network.status, 201))
 }
 const subnet = (await network.json()).properties.subnets[0].id
 await win(token, subnet)
-await fetch('https://api.github.com/repos/chaowenGUO/key/contents/0', {method:'put', headers:{'authorization':`token ${process.argv.at(2)}`}, body:globalThis.JSON.stringify({message:'message', content:globalThis.btoa(await linux(token, subnet))})})
+const ip = await linux(token, subnet)
+console.log(ip)
+await fetch('https://api.github.com/repos/chaowenGUO/key/contents/0', {method:'put', headers:{'authorization':`token ${process.argv.at(2)}`}, body:globalThis.JSON.stringify({message:'message', content:globalThis.btoa(ip)})})

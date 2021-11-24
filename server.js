@@ -1,7 +1,6 @@
-import asyncssh, aiohttp, asyncio, base64, argparse, pathlib
+import fetch from 'node-fetch'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('github')
 parser.add_argument('password')
 args = parser.parse_args()
 subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
@@ -10,7 +9,7 @@ key.write_private_key('key')
 
 print(f'Set-Content -Path c:/users/ubuntu/.ssh/authorized_keys -Value "{key.export_public_key().decode()}"')
 
-async def linux(session, token, network):
+async function linux(token, subnet):
     async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'zones':['1']}) as ip:
         if ip.status == 201:    
             while True:
@@ -85,26 +84,32 @@ async def win(session, token, network):
                 async with session.get(security.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
                    if (await _.json()).get('status') == 'Succeeded': break
                     
-async def main():
-    async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://login.microsoftonline.com/deb7ba76-72fc-4c07-833f-1628b5e92168/oauth2/token', data={'grant_type':'client_credentials', 'client_id':'60f0699c-a6da-4a59-be81-fd413d2c68bc', 'client_secret':'ljEw3qnk.HcDcd85aSBLgjdJ4uA~bqPKYz', 'resource':'https://management.azure.com/'}) as response:
-            token = (await response.json()).get('access_token')
-            async with session.head(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-                if response.status == 204:
-                    async with session.delete(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}) as response:
-                        if response.status == 202:
-                            while True:
-                                await asyncio.sleep(int(response.headers.get('retry-after')))
-                                async with session.get(response.headers.get('location'), headers={'Authorization':f'Bearer {token}'}) as _:
-                                    if _.status == 200: break
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2'}) as _: pass
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}, json={'location':'westus2', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
-                if network.status == 201:
-                    while True:
-                        await asyncio.sleep(int(network.headers.get('retry-after')))
-                        async with session.get(network.headers.get('azure-asyncOperation'), headers={'Authorization':f'Bearer {token}'}) as _:
-                            if (await _.json()).get('status') == 'Succeeded': break
-                await asyncio.gather(win(session, token, network), linux(session, token, network))
-            async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/0', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
-asyncio.run(main())
+            if interface.status == 201:
+const token = (await fetch('https://login.microsoftonline.com/deb7ba76-72fc-4c07-833f-1628b5e92168/oauth2/token', {method:'post', body:new globalThis.URLSearchParams({grant_type:'client_credentials', client_id:'60f0699c-a6da-4a59-be81-fd413d2c68bc', client_secret:'ljEw3qnk.HcDcd85aSBLgjdJ4uA~bqPKYz', resource:'https://management.azure.com/'})}).then(_ => _.json())).access_token
+const group = `https://management.azure.com/subscriptions/${subscription}/resourcegroups/machine?api-version=2021-04-01`
+const response = await fetch(group, {method:'head', headers:{authorization:`Bearer ${token}`}})
+if (globalThis.Object.is(response.status, 204))
+{
+    const response = await fetch(group, {method:'delete',  headers:{authorization:`Bearer ${token}`}})
+    if (globalThis.Object.is(response.status, 202))
+    {
+        while (true)
+        {
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, response.headers.get('retry-after') * 1000))
+            if (globalThis.Object.is(await fetch(response.headers.get('location'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.status), 200)) break
+        }
+    }
+}
+await fetch(group, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
+const network = await fetch(`https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{addressSpace:{addressPrefixes:['10.0.0.0/16']}, subnets:[{name:'machine', properties:{addressPrefix:'10.0.0.0/24'}}]}})})
+if (globalThis.Object.is(network.status, 201))
+{
+    while (true)
+    {
+        await new globalThis.Promise(_ => globalThis.setTimeout(_, network.headers.get('retry-after') * 1000))
+        if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
+    }
+}
+const subnet = (await network.json()).properties.subnets[0].id
+await global.Promise.all([win(token, subnet), linux(token, subnet)])

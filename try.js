@@ -1,6 +1,6 @@
 import SSH2Promise from 'ssh2-promise'
 
-const ssh = new SSH2Promise({host:'20.114.38.59', username:'ubuntu', identity:'key'})
+const ssh = new SSH2Promise({host:'20.114.38.59', username:'ubuntu', identity:'key', debug:console.log})
 await ssh.exec('sudo apt purge -y snapd')
 await ssh.exec('sudo apt update')
 await ssh.exec('wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb')

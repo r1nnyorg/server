@@ -35,9 +35,10 @@ async function linux(token, subnet)
     }
     const response = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {headers:{authorization:`Bearer ${token}`}})
     ip = (await response.json()).properties.ipAddress
-    console.log(ip)
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
-    await new SSH2Promise({host:ip, username:'ubuntu', identity:'key'}).exec(`sudo apt purge -y snapd
+    try
+    {
+        await new SSH2Promise({host:ip, username:'ubuntu', identity:'key'}).exec(`sudo apt purge -y snapd
 sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
@@ -45,6 +46,8 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`)
+    }
+    catch (e) {console.log(e)}
     return ip
 }
                                                                                                                        

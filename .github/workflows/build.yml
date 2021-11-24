@@ -45,7 +45,7 @@ jobs:
               cat <<EOF > /etc/cron.monthly/encrypt
               #!/bin/bash
               certbot renew
-              for i in `cat ~/ip`
+              for i in `python3 -c 'import pathlib, json; print(json.loads(pathlib.Path("ip").read_text()) + json.loads(pathlib.Path("0").read_text()))'`
               do
                   scp -o StrictHostKeyChecking=no -i ~/key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo $i | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
               done'

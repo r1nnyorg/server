@@ -3,7 +3,7 @@ import process from 'process'
 
 const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
-async function linux(token, subnet)
+/*async function linux(token, subnet)
 {
     const ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
     if (globalThis.Object.is(ip.status, 201))
@@ -48,7 +48,7 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
         return ip
-}
+}*/
                                                                                                                        
 async function win(token, subnet)
 {
@@ -124,5 +124,6 @@ if (globalThis.Object.is(network.status, 201))
         if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.httpsjson())).status, 'Succeeded')) break
     }
 }
+console.log(await network.json())
 const subnet = (await network.json()).properties.subnets[0].id
 await global.Promise.all([win(token, subnet)])network

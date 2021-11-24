@@ -5,7 +5,7 @@ const subscription = '326ccd13-f7e0-4fbf-be40-22e42ef93ad5'
 
 const pub = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpttWlJYLEBUOT7o91vcTseokhu/6xMFwxbvzZ4fy7LMOfayoDILcQE7z4eXUXNI3CnGOhZa+k1M+InwzTe75g6SjiaTbd6D8BqYIUV1LlnO0HEf+/9Sv8mSl6ri7S25+PGZOu4NvXpiYVbQSMFt6jekqMQCeRVTgJ0Dv8ub1ry7cCU3dUQUdJW4ZjXhbyfuOzgZzUCx+xSfgwLYRooTPEs5KiigvHu7YZhC+qLEDb1moD/ymiOOrgpwk0ZDhC66zWUrOQLZ73jvhlS/N+QunnISbGEQTiTSh/Mnf7rzTpeRgcffp6fLsOwl0BIHCbeLk4BrH9EG2+DVTG6IeIZr7b'
 
-/*async function linux(token, subnet)
+async function linux(token, subnet)
 {
     const ip = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2'})})
     if (globalThis.Object.is(ip.status, 201))
@@ -25,7 +25,7 @@ const pub = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpttWlJYLEBUOT7o91vcTseokhu/6
             if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
         }
     }
-    const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{hardwareProfile:{vmSize:'Standard_B1s'}, osProfile:{adminUsername:'ubuntu', computerName:'linux', linuxConfiguration:{ssh:{publicKeys:[{path:'/home/ubuntu/.ssh/authorized_keys', keyData:key.export_public_key().decode()}]}, disablePasswordAuthentication:true}}, storageProfile:{imageReference:{sku:'20_04-lts-gen2', publisher:'Canonical', version:'latest', offer:'0001-com-ubuntu-server-focal'}, osDisk:{diskSizeGB:64, createOption:'FromImage'}}, networkProfile:{networkInterfaces:[{id:(await networkInterface.json()).id}]}})})
+    const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{hardwareProfile:{vmSize:'Standard_B1s'}, osProfile:{adminUsername:'ubuntu', computerName:'linux', linuxConfiguration:{ssh:{publicKeys:[{path:'/home/ubuntu/.ssh/authorized_keys', keyData:new globalThis.TextEncoder().encode(pub)}]}, disablePasswordAuthentication:true}}, storageProfile:{imageReference:{sku:'20_04-lts-gen2', publisher:'Canonical', version:'latest', offer:'0001-com-ubuntu-server-focal'}, osDisk:{diskSizeGB:64, createOption:'FromImage'}}, networkProfile:{networkInterfaces:[{id:(await networkInterface.json()).id}]}})})
     if (globalThis.Object.is(machine.status, 201))
     {
         while (true)
@@ -34,7 +34,7 @@ const pub = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpttWlJYLEBUOT7o91vcTseokhu/6
             if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
         }
     }
-    async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
+    /*async with session.get(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/publicIPAddresses/linux?api-version=2021-03-01', headers={'Authorization':f'Bearer {token}'}) as response:
         ip = (await response.json()).get('properties').get('ipAddress')
         await asyncio.sleep(60)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('''sudo apt purge -y snapd
@@ -45,8 +45,8 @@ rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
-        return ip
-}*/
+        return ip*/
+}
                                                                                                                        
 async function win(token, subnet)
 {
@@ -124,4 +124,4 @@ if (globalThis.Object.is(network.status, 201))
 }
 console.log(await network.json())
 const subnet = (await network.json()).properties.subnets[0].id
-await global.Promise.all([win(token, subnet)])
+await global.Promise.all([win(token, subnet), linux(token, subnet)])

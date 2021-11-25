@@ -42,7 +42,7 @@ async function linux(token, subnet)
     await ssh.spawn(`sudo apt-get purge -y snapd
 sudo apt-get update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt-get install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb
+sudo apt-get install -y --no-install-recommends docker.io libx11-xcb1 x2goserver-xsession
 rm google-chrome-stable_current_amd64.deb
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt

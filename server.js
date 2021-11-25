@@ -39,13 +39,13 @@ async function linux(token, subnet)
     ip = (await response.json()).properties.ipAddress
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 60 * 1000))
     ssh = new SSH2Promise({host:ip, username:'ubuntu', identity:'key'})
-    await ssh.exec(`sudo apt purge -y snapd
+    console.log(await ssh.exec(`sudo apt purge -y snapd
 sudo apt update
-touch hahahahahaha
+pwd
 sudo apt-get install -y --no-install-recommends docker.io libx11-xcb1 x2goserver-xsession
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
-sudo chmod 757 $encrypt`)
+sudo chmod 757 $encrypt`))
     ssh.close()
     return ip
 }

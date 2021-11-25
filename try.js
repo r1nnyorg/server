@@ -12,3 +12,4 @@ if (globalThis.Object.is(response.status, 202))
         if (globalThis.Object.is((await fetch(response.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
     }
 }
+console.log(await response.json())

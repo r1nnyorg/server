@@ -39,8 +39,11 @@ async function linux(token, subnet)
     ip = (await response.json()).properties.ipAddress
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 120 * 1000))
     ssh = new SSH2Promise({host:ip, username:'ubuntu', identity:'key'})
+    try{
     console.log(await ssh.exec(`sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 pwd`))
+    }
+    catch (e) {console.log(e.toString())}
     ssh.close()
     return ip
 }

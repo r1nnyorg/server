@@ -1,5 +1,4 @@
 on:
-    push:
     schedule:
     - cron: '0 1 * * *'
     
@@ -19,7 +18,7 @@ jobs:
               echo '${{secrets.OCI}}' > oci.key
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install oci asyncssh aiohttp google-auth requests
-              #python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
+              python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
               curl https://${GITHUB_REPOSITORY%/*}.github.io/common/package.json > package.json
               npm install node-fetch ssh2-promise
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key

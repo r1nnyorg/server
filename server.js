@@ -70,7 +70,7 @@ async function win(token, subnet)
     {
         while (true)
         {
-            await new wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.debglobalThis.Promise(_ => globalThis.setTimeout(_, machine.headers.get('retry-after') * 1000))
+            await new globalThis.Promise(_ => globalThis.setTimeout(_, machine.headers.get('retry-after') * 1000))
             if (globalThis.Object.is((await fetch(network.headers.get('azure-asyncOperation'), {headers:{authorization:`Bearer ${token}`}}).then(_ => _.json())).status, 'Succeeded')) break
         }
     }

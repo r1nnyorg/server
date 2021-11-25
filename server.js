@@ -39,8 +39,13 @@ async function linux(token, subnet)
     ip = (await response.json()).properties.ipAddress
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 120 * 1000))
     ssh = new SSH2Promise({host:ip, username:'ubuntu', identity:'key'})
-    console.log(await ssh.exec(`curl https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb > google-chrome-stable_current_amd64.deb
-pwd`))
+    console.log(await ssh.exec(`wget -b https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends docker.io ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession
+rm google-chrome-stable_current_amd64.deb
+encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
+sudo mkdir -p $encrypt
+sudo chmod 757 $encrypt`))
     ssh.close()
     return ip
 }

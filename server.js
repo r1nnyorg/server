@@ -47,7 +47,6 @@ rm google-chrome-stable_current_amd64.deb wget-log
 encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`))
-    }
     ssh.close()
     return ip
 }

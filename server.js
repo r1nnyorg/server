@@ -26,7 +26,7 @@ async function linux(token, subnet)
     }
     let ssh = new SSH2Promise({host:(await fetch('https://raw.githubusercontent.com/chaowenGUO/key/main/ip', {headers:{authorization:`token ${process.argv.at(2)}`}}).then(_ => _.json())).at(0), username:'ubuntu', identity:'key'})
     const machine = await fetch(`https://management.azure.com/subscriptions/${subscription}/resourceGroups/machine/providers/Microsoft.Compute/virtualMachines/linux?api-version=2021-07-01`, {method:'put', headers:{authorization:`Bearer ${token}`, 'content-type':'application/json'}, body:globalThis.JSON.stringify({location:'westus2', properties:{hardwareProfile:{vmSize:'Standard_B1s'}, osProfile:{adminUsername:'ubuntu', computerName:'linux', linuxConfiguration:{ssh:{publicKeys:[{path:'/home/ubuntu/.ssh/authorized_keys', keyData:await ssh.exec('cat /home/ubuntu/.ssh/authorized_keys')}]}, disablePasswordAuthentication:true}}, storageProfile:{imageReference:{sku:'20_04-lts-gen2', publisher:'Canonical', version:'latest', offer:'0001-com-ubuntu-server-focal'}, osDisk:{diskSizeGB:64, createOption:'FromImage'}}, networkProfile:{networkInterfaces:[{id:(await networkInterface.json()).id}]}}})})
-    ssh.close()
+    await ssh.close()
     if (globalThis.Object.is(machine.status, 201))
     {
         while (true)
@@ -51,7 +51,7 @@ sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt`)
     }
     catch (e) {console.log(e.toString())}
-    ssh.close()
+    await ssh.close()
     return ip
 }
                                                                                                                        

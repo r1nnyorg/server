@@ -18,13 +18,13 @@ jobs:
         - run: |
               echo '${{secrets.OCI}}' > oci.key
               echo '${{secrets.GCLOUD}}' > gcloud
-              pip install oci asyncssh aiohttp google-auth requests
-              python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
-              #curl https://${GITHUB_REPOSITORY%/*}.github.io/common/package.json > package.json
-              #npm install node-fetch ssh2-promise
-              #curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key
-              #chmod 400 key
-              #node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
+              #pip install oci asyncssh aiohttp google-auth requests
+              #python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
+              curl https://${GITHUB_REPOSITORY%/*}.github.io/common/package.json > package.json
+              npm install node-fetch ssh2-promise
+              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key
+              chmod 400 key
+              node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}
               sudo apt install -y --no-install-recommends miredo
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142

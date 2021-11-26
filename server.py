@@ -172,7 +172,7 @@ async def win(session, token, subnet, availabilitySet):
 #    az group delete -n win -y
 #fi
 #az group create -n win -l westus
-#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64
+#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64 --availability-set machine --vnet-name machine
 #az vm open-port -g win -n win --port 22
                     
 async def main():

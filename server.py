@@ -172,7 +172,7 @@ async def win(session, token, subnet, availabilitySet):
 #    az group delete -n win -y
 #fi
 #az group create -n win -l westus
-#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64 --availability-set machine --vnet-name machine
+#az vm create -n win -g machine --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64 --availability-set machine --vnet-name machine --subnet machine
 #az vm open-port -g win -n win --port 22
                     
 async def main():
@@ -197,7 +197,7 @@ async def main():
                             if (await _.json()).get('status') == 'Succeeded': break
                 subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}, 'properties':{'platformFaultDomainCount':2}}) as response:
-                    availabilitySet = (await response.json()).get('id')
+                    availabiaz vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64 --availability-set machine --vnet-name machinelitySet = (await response.json()).get('id')
                     await win(session, token, subnet, availabilitySet)
                     async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), arm(), gcloud(session), linux(session, token, subnet, availabilitySet))).encode()).decode()}) as _: pass
             async with session.put('https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass

@@ -169,10 +169,10 @@ async def win(session, token, subnet, availabilitySet):
                    if (await _.json()).get('status') == 'Succeeded': break
 #if `az group exists -n win`
 #then
-#    az group delete -n wi -y
+#    az group delete -n win -y
 #fi
 #az group create -n win -l westus
-#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2019-datacenter-core-with-containers-smalldisk-g2:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64
+#az vm create -n win -g win --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64
 #az vm open-port -g win -n win --port 22
                     
 async def main():

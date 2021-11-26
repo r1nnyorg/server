@@ -98,7 +98,8 @@ async function win(token, subnet)
     await new globalThis.Promise(_ => globalThis.setTimeout(_, 90 * 1000))
     const ssh = new SSH2Promise({host:ip, username:'ubuntu', password:process.argv.at(3)})
     try{
-    console.log(await ssh.exec(`Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+    console.log(await ssh.exec(`Install-WindowsFeature -Name Hyper-V,Containers -IncludeAllSubFeature -IncludeManagementTools
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
 Install-Package -Name docker -ProviderName DockerMsftProvider -Force`))
     } catch (e) {console.log(e.toString())}

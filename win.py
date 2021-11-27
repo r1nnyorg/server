@@ -1,4 +1,8 @@
-import aiohttp, asyncio
+import aiohttp, asyncio, argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('password')
+args = parser.parse_args()
 
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 

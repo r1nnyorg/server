@@ -1,6 +1,7 @@
 import aiohttp, asyncio, argparse
 
 parser = argparse.ArgumentParser()
+for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
 parser.add_argument('password')
 args = parser.parse_args()
 

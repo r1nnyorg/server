@@ -1,3 +1,5 @@
+import aiohttp, asyncio
+
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 
 async def main():

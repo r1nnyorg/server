@@ -10,3 +10,5 @@ async def main():
                         await asyncio.sleep(int(machine.headers.get('retry-after')))
                         async with session.get(machine.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
+
+asyncio.run(main())

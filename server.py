@@ -95,7 +95,7 @@ async def gcloud(session):
 #ssh-keygen -f google -N ''
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute firewall-rules create FooService --allow=tcp:443
-#gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=f1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
+#gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=e1-micro --zone=us-central1-a --boot-disk-size=30GB --tags https-server --metadata=ssh-keys="chaowen_guo1:`cat google.pub`"
 
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 

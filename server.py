@@ -85,7 +85,7 @@ async def gcloud(session):
         async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
             if response.status == 404: break
     async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
-    async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/f1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
+    async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/e1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
     await asyncio.sleep(5)
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')

@@ -85,7 +85,7 @@ async def gcloud(session):
         async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
             if response.status == 404: break
     async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
-    async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/e1-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
+    async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/e2-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu: ' + key.export_public_key().decode()}]}}) as _: pass
     await asyncio.sleep(5)
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         ip = (await response.json()).get('networkInterfaces')[0].get('accessConfigs')[0].get('natIP')
@@ -95,7 +95,7 @@ async def gcloud(session):
 #ssh-keygen -f google -N ''
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute firewall-rules create FooService --allow=tcp:443
-#gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=e1-micro --zone=us-central1-a --boot-disk-size=30GB --boot-disk-type=pd-standard --metadata=ssh-keys="ubuntu:`cat google.pub`"
+#gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=e2-micro --zone=us-central1-a --boot-disk-size=30GB --boot-disk-type=pd-standard --metadata=ssh-keys="ubuntu:`cat google.pub`"
 
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'
 

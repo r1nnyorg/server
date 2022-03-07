@@ -61,6 +61,7 @@ jobs:
           with:
               python-version: 3.x
         - run: |
+              echo '${{secrets.OCI}}' > oci.key
               pip install oci asyncssh aiohttp
               python arm.py            
     clean:

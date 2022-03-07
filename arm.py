@@ -8,7 +8,7 @@ virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientComposite
 vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
 
 async def arm():
-    launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.A1.Flex', metadata={'ssh_authorized_keys':key.export_public_key().decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04').data[0].id, subnet_id=subnet.id, shape_config=oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=4))
+    launchInstanceDetails = oci.core.models.LaunchInstanceDetails(availability_domain=oci.identity.IdentityClient(configure).list_availability_domains(compartment_id=vcn.compartment_id).data[0].name, compartment_id=vcn.compartment_id, shape='VM.Standard.A1.Flex', metadata={'ssh_authorized_keys':'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6HMfczm0N5/R7LRlC0Z8903DNxwlozMWVs7xxS6curdX8xKW/vG7BzboS/nBVCajUR1CwJSKKHIIKBwn+UGvV1Mp/fVCMxZT4IaIqUqxg6Guk85PLhBQMFp/e+EYFyVIL8rPRMgwGwa3nB0ed5y3xDo6gADnwhx4R2A3gFBsMGE9l9PfrzEWTTmwK+wNoLoOp+wkiTYkIPAukvLUJuOB5YmZiPN0ctx2fylyFOunUqL/mDCALS+mkUMtPEfd0RFDjShcQNY8WcN8X/9NS9qYhcjD6f195VmsGqFHS+LqAAuiIeTKgNQB2YcDFDBASrcrVgpLHw8wLKQVemvAk0ruh'.decode()}, image_id=computeClient.list_images(compartment_id=vcn.compartment_id, operating_system='Canonical Ubuntu', operating_system_version='20.04').data[0].id, subnet_id=subnet.id, shape_config=oci.core.models.LaunchInstanceShapeConfigDetails(ocpus=4))
     instance = computeClientCompositeOperations.launch_instance_and_wait_for_state(launchInstanceDetails, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_RUNNING]).data
     ip = oci.core.VirtualNetworkClient(configure).get_vnic(computeClient.list_vnic_attachments(compartment_id=vcn.compartment_id, instance_id=instance.id).data[0].vnic_id).data.public_ip
     await asyncio.sleep(45)
@@ -21,4 +21,5 @@ sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
     return ip
 
-print(asyncio.run(arm()))
+print(asyncio.run(arm()))ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6HMfczm0N5/R7LRlC0Z8903DNxwlozMWVs7xxS6curdX8xKW/vG7BzboS/nBVCajUR1CwJSKKHIIKBwn+UGvV1Mp/fVCMxZT4IaIqUqxg6Guk85PLhBQMFp/e+EYFyVIL8rPRMgwGwa3nB0ed5y3xDo6gADnwhx4R2A3gFBsMGE9l9PfrzEWTTmwK+wNoLoOp+wkiTYkIPAukvLUJuOB5YmZiPN0ctx2fylyFOunUqL/mDCALS+mkUMtPEfd0RFDjShcQNY8WcN8X/9NS9qYhcjD6f195VmsGqFHS+LqAAuiIeTKgNQB2YcDFDBASrcrVgpLHw8wLKQVemvAk0ruh
+

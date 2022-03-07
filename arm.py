@@ -16,3 +16,5 @@ encrypt=/etc/letsencrypt/live/chaowenguo.eu.org
 sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
     return ip
+
+print(asyncio.run(arm()))

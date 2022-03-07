@@ -21,5 +21,4 @@ sudo mkdir -p $encrypt
 sudo chmod 757 $encrypt''')
     return ip
 
-print(asyncio.run(arm()))ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6HMfczm0N5/R7LRlC0Z8903DNxwlozMWVs7xxS6curdX8xKW/vG7BzboS/nBVCajUR1CwJSKKHIIKBwn+UGvV1Mp/fVCMxZT4IaIqUqxg6Guk85PLhBQMFp/e+EYFyVIL8rPRMgwGwa3nB0ed5y3xDo6gADnwhx4R2A3gFBsMGE9l9PfrzEWTTmwK+wNoLoOp+wkiTYkIPAukvLUJuOB5YmZiPN0ctx2fylyFOunUqL/mDCALS+mkUMtPEfd0RFDjShcQNY8WcN8X/9NS9qYhcjD6f195VmsGqFHS+LqAAuiIeTKgNQB2YcDFDBASrcrVgpLHw8wLKQVemvAk0ruh
-
+print(asyncio.run(arm()))

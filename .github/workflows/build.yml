@@ -50,9 +50,9 @@ jobs:
                   scp -o StrictHostKeyChecking=no -i ~/key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo $i | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
               done
               sshpass -p `echo ${{secrets.PASSWORD}} | cut -c 1-10` scp -o StrictHostKeyChecking=no -r /etc/letsencrypt/live/chaowenguo.eu.org root@[2a01:4f8:211:25cf::2196:1]:/etc/letsencrypt/live
-              curl -H "authorization:token ${{secrets.GITHUB}}" -d "{\"event_type\":\"dummy\"}" https://api.github.com/repos/chaowenguoorg/koa/dispatches
-              curl -H "authorization:token ${{secrets.GITHUB}}" -d "{\"event_type\":\"dummy\"}" https://api.github.com/repos/chaowenguoorg/aiohttp/dispatches
-              curl -H "authorization:token ${{secrets.GITHUB}}" -d "{\"event_type\":\"dummy\"}" https://api.github.com/repos/chaowenguoorg/vertx/dispatches'
+              curl -H "authorization:token ${{secrets.GITHUB}}" -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/koa/dispatches
+              curl -H "authorization:token ${{secrets.GITHUB}}" -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/aiohttp/dispatches
+              curl -H "authorization:token ${{secrets.GITHUB}}" -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/vertx/dispatches'
               curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     arm:
         runs-on: ubuntu-latest

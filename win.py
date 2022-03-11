@@ -26,3 +26,4 @@ async def main():
                         if (await _.json()).get('status') == 'Succeeded': break
                             
 asyncio.run(main())
+# delete vm and os disk

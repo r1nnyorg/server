@@ -30,8 +30,9 @@ createNetworkSecurityGroupDetails = oci.core.models.CreateNetworkSecurityGroupDe
 #addSecurityRuleDetails = oci.core.models.AddSecurityRuleDetails(direction='INGRESS', source='0.0.0.0/0', source_type='CIDR_BLOCK', protocol='6', tcp_options=oci.core.models.TcpOptions(destination_port_range=oci.core.models.PortRange(min=443, max=443)))
 #addSecurityRulesDetails = oci.core.models.AddNetworkSecurityGroupSecurityRulesDetails(security_rules=[addSecurityRuleDetails])
 #virtualNetworkClient.add_network_security_group_security_rules(security.id, addSecurityRulesDetails)
-key = asyncssh.generate_private_key('ssh-rsa')
-key.write_private_key('key')
+#key = asyncssh.generate_private_key('ssh-rsa')
+#key.write_private_key('key')
+key = asyncssh.import_private_key(pathlib.Path(__file__).parent.joinpath('key').read_bytes())
 
 init = '''sudo apt update
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb

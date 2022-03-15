@@ -65,4 +65,4 @@ jobs:
               python-version: 3.x
         - run: |
               pip install aiohttp
-              curl https://${GITHUB_REPOSITORY%/*}.github.io/common/clean.py | python - ${{secrets.GITHUB_TOKEN}}              
+              curl https://${GITHUB_REPOSITORY%/*}.github.io/common/clean.py | python - ${{secrets.GITHUB_TOKEN}}                

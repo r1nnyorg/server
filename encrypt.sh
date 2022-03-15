@@ -3,7 +3,7 @@ for i in `python3 -c 'import pathlib, json; print(json.loads(pathlib.Path.home()
 do
     scp -o StrictHostKeyChecking=no -i ~/key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo $i | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
 done
-sshpass -p $password scp -o StrictHostKeyChecking=no -r /etc/letsencrypt/live/chaowenguo.eu.org root@[2a01:4f8:211:25cf::65e:1]:/etc/letsencrypt/livei
+sshpass -p $password scp -o StrictHostKeyChecking=no -r /etc/letsencrypt/live/chaowenguo.eu.org root@[2a01:4f8:211:25cf::65e:1]:/etc/letsencrypt/live
 curl -H authorization:token\ $github -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/koa/dispatches
 curl -H authorization:token\ $github -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/aiohttp/dispatches
 curl -H authorization:token\ $github -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/vertx/dispatches

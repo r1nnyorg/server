@@ -1,6 +1,4 @@
-import aiohttp, asyncio, argparse, asyncssh, pathlib
-
-print(asyncssh.import_private_key(pathlib.Path(__file__).parent.joinpath('key').read_bytes()).export_public_key().decode())
+import aiohttp, asyncio, argparse
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)
@@ -27,5 +25,5 @@ async def main():
                     async with session.get(response.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                         if (await _.json()).get('status') == 'Succeeded': break
                             
-#asyncio.run(main())
+asyncio.run(main())
 # delete vm and os disk

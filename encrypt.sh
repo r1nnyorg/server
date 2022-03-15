@@ -12,5 +12,7 @@ do
 done
 
 #curl -H authorization:token\ $github -d {\"event_type\":\"dummy\"\,\"client_payload\":{\"foo\":\"bar\"}} https://api.github.com/repos/chaowenguoorg/server/dispatches
+#echo '${{ github.event.client_payload.foo }}'
+#echo '${{ toJson(github.event.client_payload) }}'
 #redis-cli --cluster create 40.118.245.62:6379 20.112.94.147:6379 155.248.198.227:6379 --cluster-yes
 #journalctl -u encrypt.service

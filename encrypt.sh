@@ -1,4 +1,3 @@
-#!/bin/bash
 certbot renew
 for i in `python3 -c 'import pathlib, json; print(json.loads(pathlib.Path.home().joinpath("ip").read_text()) + [json.loads(pathlib.Path.home().joinpath("0").read_text())])'`
 do

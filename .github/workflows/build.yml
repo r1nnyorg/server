@@ -1,6 +1,7 @@
 on:
     schedule:
     - cron: '0 1 * * *'
+    repository_dispatch:
     
 jobs:
     build:
@@ -66,3 +67,14 @@ jobs:
         - run: |
               pip install aiohttp
               curl https://${GITHUB_REPOSITORY%/*}.github.io/common/clean.py | python - ${{secrets.GITHUB_TOKEN}}                
+    redis:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'repository_dispatch'
+        steps:
+        - run: |
+              curl -H authorization:token\ ${{secrets.GITHUB}} -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/koa/dispatches
+              curl -H authorization:token\ ${{secrets.GITHUB}} -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/aiohttp/dispatches
+              curl -H authorization:token\ ${{secrets.GITHUB}} -d {\"event_type\":\"dummy\"} https://api.github.com/repos/chaowenguoorg/vertx/dispatches
+              redis-cli --cluster create 40.118.245.62:6379 20.112.94.147:6379 155.248.198.227:6379 --cluster-yes
+              echo ${{ github.event.client_payload.foo }}
+              echo ${{ toJson(github.event.client_payload) }}

@@ -1,7 +1,6 @@
 import aiohttp, asyncio, argparse, asyncssh, pathlib
 
-print(pathlib.Path(__file__))
-#asyncssh.import_private_key()
+print(asyncssh.import_private_key(pathlib.Path(__file__).parent.joinpath('key').read_bytes()).export_public_key().decode())
 
 parser = argparse.ArgumentParser()
 for _ in ('clientid', 'clientsecret', 'tenantid'): parser.add_argument(_)

@@ -42,8 +42,6 @@ jobs:
               certbot certonly --manual-public-ip-logging-ok --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org;
               sudo mv encrypt.service encrypt.timer /usr/lib/systemd/system;
               sudo systemctl enable subscribe.timer'
-              #ssh-keygen -f /root/.ssh/euserv.key -N "";
-              #mv /root/.ssh/euserv.key.pub /root/.ssh/authorized_keys
               #curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     arm:
         runs-on: ubuntu-latest

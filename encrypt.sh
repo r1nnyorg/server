@@ -1,12 +1,12 @@
 certbot renew
 for i in `python3 -c 'import pathlib, json; print(json.loads(pathlib.Path.home().joinpath("ip").read_text()) + [json.loads(pathlib.Path.home().joinpath("0").read_text())])'`
 do
-    scp -o StrictHostKeyChecking=no -i ~/key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo $i | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
+    scp -o StrictHostKeyChecking=no -i /root/.ssh/key -r /etc/letsencrypt/live/chaowenguo.eu.org ubuntu@[2a03:7900:6446::`echo $i | grep -Eo [0-9.]+`]:/etc/letsencrypt/live
 done
 #sshpass -p $password scp -o StrictHostKeyChecking=no -r /etc/letsencrypt/live/chaowenguo.eu.org root@[2a01:4f8:211:25cf::65e:1]:/etc/letsencrypt/live
 for i in 40.118.245.62 20.112.94.147 155.248.198.227
 do
-    ssh -o StrictHostKeyChecking=no -i ~/key ubuntu@2a03:7900:6446::$i 'sudo docker stop ingress;
+    ssh -o StrictHostKeyChecking=no -i /root/.ssh/key ubuntu@2a03:7900:6446::$i 'sudo docker stop ingress;
     sudo docker rm ingress;
     sudo docker run -d --name ingress --net backend -p 443:443 -v /etc/letsencrypt/live/chaowenguo.eu.org:/encrypt:ro chaowenguo/ingress'
 done

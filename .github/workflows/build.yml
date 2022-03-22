@@ -16,7 +16,7 @@ jobs:
           with:
               node-version: 17.x
         - run: |
-              echo ${{secrets.PASSWORD}}${{secrets.PASSWORD}} | sed 's/./& /g'
+              #echo ${{secrets.PASSWORD}}${{secrets.PASSWORD}} | sed 's/./& /g'
               echo '${{secrets.OCI}}' > oci.key
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install oci asyncssh aiohttp google-auth requests   

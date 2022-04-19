@@ -91,7 +91,6 @@ async def gcloud(session):
         await asyncio.sleep(60)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run(init)
         return ip
-#ssh-keygen -f google -N ''
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
 #gcloud compute firewall-rules create https --allow=tcp:443
 #gcloud compute instances create google --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud --machine-type=e2-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys="ubuntu:`cat google.pub`"
@@ -122,7 +121,6 @@ async def linux(session, token, subnet, availabilitySet):
         await asyncio.sleep(60)
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run('sudo apt purge -y snapd\n' + init)
         return ip
-#ssh-keygen -f azure -N ''
 #if `az group exists -n linux`
 #then
 #    az group delete -n linux -y

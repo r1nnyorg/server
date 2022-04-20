@@ -17,7 +17,7 @@ jobs:
               node-version: 17.x
         - run: |
               #echo ${{secrets.PASSWORD}}${{secrets.PASSWORD}} | sed 's/./& /g'
-              echo '${{secrets.OCI}}' > oci.key
+              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/oci.key > oci.key
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install oci asyncssh aiohttp google-auth requests   
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key

@@ -4,6 +4,13 @@ on:
     - cron: '0 1 * * *'
     
 jobs:
+    backup:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push'
+        steps:
+        - uses: actions/checkout@main
+        - run: |
+
     build:
         runs-on: ubuntu-latest
         if: github.event_name == 'push'

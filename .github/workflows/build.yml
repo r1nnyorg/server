@@ -1,7 +1,7 @@
 on:
     push:
     schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 */1 * * *'
     repository_dispatch:
     
 jobs:
@@ -70,7 +70,7 @@ jobs:
               python arm.py            
     clean:
         runs-on: ubuntu-latest
-        if: github.event.schedule == '0 1 * * *'
+        if: github.event.schedule == '0 */1 * * *'
         steps:
         - uses: actions/setup-python@main
           with:

@@ -2,6 +2,7 @@ on:
     push:
     schedule:
     - cron: '0 1 * * *'
+    repository_dispatch:
     
 jobs:
     backup:
@@ -55,7 +56,7 @@ jobs:
               #curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     arm:
         runs-on: ubuntu-latest
-        if: github.event_name == 'push'
+        if: github.event_name == 'repository_dispatch'
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-python@main

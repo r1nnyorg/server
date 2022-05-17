@@ -70,7 +70,7 @@ jobs:
               python arm.py            
     clean:
         runs-on: ubuntu-latest
-        #if: github.event.schedule == '0 */1 * * *'
+        if: github.event.schedule == '0 */1 * * *'
         permissions: write-all
         steps:
         - uses: actions/setup-python@main

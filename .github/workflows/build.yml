@@ -46,10 +46,10 @@ jobs:
               sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.service encrypt.timer 12h.service 12h.timer azure.service azure.timer root@[$ip]:/usr/lib/systemd/system
               sshpass -p $password ssh -o root@$ip 'ssh-keygen -yf /root/.ssh/key > /root/.ssh/authorized_keys;
               sed -i s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/g /etc/ssh/sshd_config;
-              sudo systemctl restart ssh;
-              sudo apt update;
+              systemctl restart ssh;
+              apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
-              sudo apt install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp curl;
+              apt install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp curl;
               rm google-chrome-stable_current_amd64.deb;
               echo nameserver 2a03:7900:2:0:31:3:104:161 > /etc/resolv.conf;
               certbot certonly --manual-public-ip-logging-ok --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org;

@@ -28,13 +28,13 @@ jobs:
               node-version: 18.x
         - run: |
               #echo ${{secrets.PASSWORD}}${{secrets.PASSWORD}} | sed 's/./& /g'
-              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/oci.key > oci.key
-              echo '${{secrets.GCLOUD}}' > gcloud
-              pip install oci asyncssh aiohttp google-auth requests   
-              curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/key > key
+              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/oci.key > oci.key
+              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/key > key
               chmod 400 key
-              #python server.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
-              #python win.py ${{secrets.CLIENTID}} ${{secrets.CLIENTSECRET}} ${{secrets.TENANTID}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              echo '${{secrets.GCLOUD}}' > gcloud
+              pip install oci asyncssh aiohttp google-auth requests           
+              #python server.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANTID}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               #curl https://${GITHUB_REPOSITORY%/*}.github.io/common/package.json > package.json
               #npm install node-fetch ssh2-promise
               #node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}

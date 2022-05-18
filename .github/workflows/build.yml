@@ -45,7 +45,7 @@ jobs:
               sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.py encrypt.sh azure.py root@[$ip]:/root
               sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.service encrypt.timer 12h.service 12h.timer azure.service azure.timer root@[$ip]:/usr/lib/systemd/system
               sshpass -p $password ssh -o root@$ip 'ssh-keygen -yf /root/.ssh/key > /root/.ssh/authorized_keys;
-              sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/g" /etc/ssh/sshd_config;
+              sed -i s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/g /etc/ssh/sshd_config;
               sudo systemctl restart ssh;
               sudo apt update;
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;

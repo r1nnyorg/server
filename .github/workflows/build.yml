@@ -25,7 +25,7 @@ jobs:
               python-version: 3.x
         - uses: actions/setup-node@main
           with:
-              node-version: 17.x
+              node-version: 18.x
         - run: |
               #echo ${{secrets.PASSWORD}}${{secrets.PASSWORD}} | sed 's/./& /g'
               curl https://${{secrets.GITHUB}}@raw.githubusercontent.com/chaowenGUO/server/main/oci.key > oci.key

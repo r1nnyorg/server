@@ -35,7 +35,7 @@ jobs:
               pip install oci asyncssh aiohttp google-auth requests           
               #python server.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANTID}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
-              #curl https://${GITHUB_REPOSITORY%/*}.github.io/common/package.json > package.json
+              curl https://raw.githubusercontent.com/$GITHUB_REPOSITORY_OWNER/common/main/package.json > package.json
               #npm install node-fetch ssh2-promise
               #node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               sudo apt install -y --no-install-recommends miredo

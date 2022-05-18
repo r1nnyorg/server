@@ -4,8 +4,8 @@ OnUnitActiveSec=12h 15min
 
 [Install]
 WantedBy=timers.target
-#systemctl enable subscribe.timer --now #ln -s /usr/lib/systemd/system/subscribe.timer /etc/systemd/system/timers.target.wants/subscribe.timer && systemctl start subscribe.timer
-#this file should be in /usr/lib/systemd/system
+#systemctl enable 12h.timer --now #ln -s /usr/lib/systemd/system/12h.timer /etc/systemd/system/timers.target.wants/12h.timer && systemctl start 12h.timer
+#systemctl disable 12h.timer --now
 #systemctl list-timers
 #/etc/systemd/system.conf
 #[Manager]

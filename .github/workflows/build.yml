@@ -42,8 +42,8 @@ jobs:
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142
               sshpass -p $password scp -o StrictHostKeyChecking=no key root@[$ip]:/root/.ssh
-              sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.py encrypt.sh root@[$ip]:/root
-              sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.service encrypt.timer root@[$ip]:/usr/lib/systemd/system
+              sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.py encrypt.sh azure.py root@[$ip]:/root
+              sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.service encrypt.timer 12h.service 12h.timer azure.service azure.timer root@[$ip]:/usr/lib/systemd/system
               sshpass -p $password ssh -o root@$ip 'ssh-keygen -yf /root/.ssh/key > /root/.ssh/authorized_keys;
               sed -i "s/#PasswordAuthentication yes/PasswordAuthentication no/g" /etc/ssh/sshd_config;
               sudo systemctl restart ssh;
@@ -51,9 +51,9 @@ jobs:
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
               sudo apt install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp curl;
               rm google-chrome-stable_current_amd64.deb;
-              echo "nameserver 2a03:7900:2:0:31:3:104:161" > /etc/resolv.conf;
+              echo nameserver 2a03:7900:2:0:31:3:104:161 > /etc/resolv.conf;
               certbot certonly --manual-public-ip-logging-ok --email chaowen.guo1@gmail.com --agree-tos --manual --preferred-challenges=dns --manual-auth-hook "python3 ~/encrypt.py pre" --manual-cleanup-hook "python3 ~/encrypt.py post" -d *.chaowenguo.eu.org;
-              sudo systemctl enable encrypt.timer --now'
+              sudo systemctl enable encrypt.timer 12h.timer azure.timer --now'
               #curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     arm:
         runs-on: ubuntu-latest

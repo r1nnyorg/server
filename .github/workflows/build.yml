@@ -12,10 +12,10 @@ jobs:
         - uses: actions/checkout@main
         - run: |
               git fetch --unshallow
-              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/key > key
+              echo '${{secrets.KEY}}' > key
               chmod 400 key
-              git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' push git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/} -f
-    build:
+              git -c core.sshCommand='ssh -i key -o StrictHostKeyChecking=no' push -f git@bitbucket.org:chaowenguo/${GITHUB_REPOSITORY#*/}
+    euserv:
         runs-on: ubuntu-latest
         if: github.event_name == 'dummy'
         steps:
@@ -65,7 +65,7 @@ jobs:
               python-version: 3.x
         - run: |
               curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/oci.key > oci.key
-              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/key > key
+              echo '${{secrets.KEY}}' > key
               chmod 400 key
               pip install oci asyncssh aiohttp
               python arm.py            

@@ -64,7 +64,7 @@ jobs:
           with:
               python-version: 3.x
         - run: |
-              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/oci.key > oci.key
+              echo '${{secrets.OCI}}' > oci.key
               echo '${{secrets.KEY}}' > key
               chmod 400 key
               pip install oci asyncssh aiohttp

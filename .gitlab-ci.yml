@@ -8,4 +8,6 @@ arm:
       echo "$key" > key
       chmod 400 key
       pip install oci asyncssh aiohttp
-      python arm.py            
+      python arm.py
+
+#curl -d token=630bd2c40659362cb8e17d5ff5c88f\&ref=main https://gitlab.com/api/v4/projects/tvbbvtorg%2Fserver/trigger/pipeline

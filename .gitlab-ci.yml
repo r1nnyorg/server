@@ -1,0 +1,11 @@
+arm:
+    image: python:slim
+    only:
+    - triggers
+    script:
+    - |
+      echo "$oci" > oci.key
+      echo "$key" > key
+      chmod 400 key
+      pip install oci asyncssh aiohttp
+      python arm.py            

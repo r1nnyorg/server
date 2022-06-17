@@ -80,4 +80,4 @@ jobs:
               python-version: 3.x
         - run: |
               pip install aiohttp
-              curl https://raw.githubusercontent.com/$GITHUB_REPOSITORY_OWNER/common/main/clean.py | python - ${{secrets.GITHUB_TOKEN}}
+              curl https://bitbucket.org/chaowenguo/common/raw/main/clean.py | python - ${{secrets.GITHUB_TOKEN}}

@@ -1,0 +1,3 @@
+[Service]
+ExecStartPre=/bin/curl -H authorization:token\s${github} -d {\"event_type\":\"2h\"} https://api.github.com/repos/bvttvborg/pal/dispatches
+ExecStart=/usr/bin/node %h/browserstack.js 

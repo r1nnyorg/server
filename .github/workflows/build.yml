@@ -52,16 +52,16 @@ jobs:
               node-version: 18.x
         - run: |
               #echo ${{secrets.PASSWORD}}${{secrets.PASSWORD}} | sed 's/./& /g'
-              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/oci.key > oci.key
-              curl -H authorization:token\ ${{secrets.GITHUB}} https://raw.githubusercontent.com/$GITHUB_ACTOR/key/main/key > key
+              echo '${{secrets.OCI}}' > oci.key
+              echo '${{secrets.KEY}}' > key
               chmod 400 key
               echo '${{secrets.GCLOUD}}' > gcloud
               pip install oci asyncssh aiohttp google-auth requests           
-              #python server.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANTID}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
-              #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANTID}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
-              curl https://raw.githubusercontent.com/$GITHUB_REPOSITORY_OWNER/common/main/package.json > package.json
-              #npm install node-fetch ssh2-promise
-              #node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              python server.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              curl https://bitbucket.org/chaowenguo/common/raw/main/package.json > package.json
+              npm install node-fetch ssh2-promise
+              node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     arm:
         runs-on: ubuntu-latest
         if: github.event_name == 'repository_dispatch'

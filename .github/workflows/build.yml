@@ -64,7 +64,7 @@ jobs:
               node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     arm:
         runs-on: ubuntu-latest
-        if: github.event.action == '10min'
+        if: github.event.action == '2min'
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-python@main

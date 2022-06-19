@@ -86,7 +86,7 @@ jobs:
               python-version: 3.x
         - run: |
               pip install aiohttp
-              python win.py            
+              python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}}           
     clean:
         runs-on: ubuntu-latest
         if: github.event.schedule == '0 */1 * * *'

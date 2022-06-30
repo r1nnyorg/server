@@ -13,7 +13,7 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
-virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options = None
+print(virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options)
 #virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 #virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
 #for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
@@ -167,9 +167,10 @@ async def win(session, token, subnet, availabilitySet):
                     
 async def main():
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
-            token = (await response.json()).get('access_token')
-            group = f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01'
+        await asyncio.gather(oracle(), oracle(), gcloud(session))
+    #    async with session.post(f'https://login.microsoftonline.com/{args.tenantid}/oauth2/token', data={'grant_type':'client_credentials', 'client_id':args.clientid, 'client_secret':args.clientsecret, 'resource':'https://management.azure.com/'}) as response:
+    #        token = (await response.json()).get('access_token')
+    #        group = f'https://management.azure.com/subscriptions/{subscription}/resourcegroups/machine?api-version=2021-04-01'
             #async with session.head(group, headers={'authorization':f'Bearer {token}'}) as response:
             #    if response.status == 204:
             #        async with session.delete(group, headers={'authorization':f'Bearer {token}'}) as response:
@@ -179,18 +180,18 @@ async def main():
             #                    async with session.get(response.headers.get('location'), headers={'authorization':f'Bearer {token}'}) as _:
             #                        if _.status == 200: break
             #async with session.put(group, headers={'authorization':f'Bearer {token}'}, json={'location':'westus'}) as _: pass
-            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
-                if network.status == 201:
-                    while True:
-                        await asyncio.sleep(int(network.headers.get('retry-after')))
-                        async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
-                            if (await _.json()).get('status') == 'Succeeded': break
-                #subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
-                #async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}, 'properties':{'platformFaultDomainCount':2}}) as response:
-                #    availabilitySet = (await response.json()).get('id')
-                #    await win(session, token, subnet, availabilitySet)
-                    async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token, subnet, availabilitySet))).encode()).decode()}) as _: pass
-            async with session.put('https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
+    #        async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Network/virtualNetworks/machine?api-version=2021-03-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'properties':{'addressSpace':{'addressPrefixes':['10.0.0.0/16']}, 'subnets':[{'name':'machine', 'properties':{'addressPrefix':'10.0.0.0/24'}}]}}) as network:
+    #            if network.status == 201:
+    #                while True:
+    #                    await asyncio.sleep(int(network.headers.get('retry-after')))
+    #                    async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
+    #                        if (await _.json()).get('status') == 'Succeeded': break
+    #            subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
+    #            async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}, 'properties':{'platformFaultDomainCount':2}}) as response:
+    #                availabilitySet = (await response.json()).get('id')
+    #                await win(session, token, subnet, availabilitySet)
+    #                async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token, subnet, availabilitySet))).encode()).decode()}) as _: pass
+    #        async with session.put('https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
 asyncio.run(main())
 #https://51.ruyo.net/14138.html#13 oci 

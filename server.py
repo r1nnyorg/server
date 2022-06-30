@@ -13,7 +13,8 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
-print(virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options)
+a = virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options
+print(a, type(a))
 #virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 #virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
 #for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])

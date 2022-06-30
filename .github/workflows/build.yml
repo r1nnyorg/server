@@ -41,7 +41,7 @@ jobs:
               #curl -X PUT -H 'authorization: token ${{secrets.GITHUB}}' -d '{"message":"message","content":"'`base64 -w 0 euserv.key`'"}' https://api.github.com/repos/chaowenGUO/key/contents/euserv.key
     server:
         runs-on: ubuntu-latest
-        if: github.event_name == 'dummy'
+        if: github.event_name == 'push'
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-python@main
@@ -60,8 +60,8 @@ jobs:
               python server.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               curl https://bitbucket.org/chaowenguo/common/raw/main/package.json > package.json
-              npm install node-fetch ssh2-promise
-              node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              #npm install node-fetch ssh2-promise
+              #node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     arm:
         runs-on: ubuntu-latest
         if: github.event.action == '2min'

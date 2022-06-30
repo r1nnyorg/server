@@ -35,7 +35,7 @@ async def oracle():
 import google.auth, google.auth.transport.requests, google.oauth2, builtins
 
 credentials = google.oauth2.service_account.Credentials.from_service_account_file('gcloud', scopes=['https://www.googleapis.com/auth/cloud-platform'])
-auth_req = google.auth.transport.requsts.Request()
+auth_req = google.auth.transport.requests.Request()
 credentials.refresh(auth_req)
 project = 'chaowenguo'
 zone = 'us-central1-a'

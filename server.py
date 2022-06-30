@@ -13,6 +13,7 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
+print(virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0])
 #virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 #virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
 #for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
@@ -191,5 +192,5 @@ async def main():
                     async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token, subnet, availabilitySet))).encode()).decode()}) as _: pass
             async with session.put('https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
-#asyncio.run(main())
+asyncio.run(main())
 #https://51.ruyo.net/14138.html#13 oci 

@@ -8,24 +8,25 @@ args = parser.parse_args()
 configure = {'user':'ocid1.user.oc1..aaaaaaaalwudh6ys7562qtyfhxl4oji25zn6aapndqfuy2jfroyyielpu3pa', 'key_file':'oci.key', 'fingerprint':'bd:01:98:0d:5d:4a:6f:b2:49:b4:7f:df:43:00:32:39', 'tenancy':'ocid1.tenancy.oc1..aaaaaaaa4h5yoefhbxm4ybqy6gxl6y5cgxmdijira7ywuge3q4cbdaqnyawq', 'region':'us-sanjose-1'}
 computeClient = oci.core.ComputeClient(configure)
 computeClientCompositeOperations = oci.core.ComputeClientCompositeOperations(computeClient)
-for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).data: computeClientCompositeOperations.terminate_instance_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_TERMINATED])
-virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
-virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
-for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
-for _ in virtualNetworkClient.list_internet_gateways(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_internet_gateway_and_wait_for_state(_.id, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_TERMINATED])
-for _ in virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_subnet_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_TERMINATED])
-for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_vcn_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_TERMINATED])
-createVcnDetails = oci.core.models.CreateVcnDetails(compartment_id=configure.get('tenancy'), cidr_block='10.0.0.0/16')
-vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
-createSubnetDetails = oci.core.models.CreateSubnetDetails(compartment_id=vcn.compartment_id, vcn_id=vcn.id, cidr_block=vcn.cidr_block)
-subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
-createInternetGatewayDetails = oci.core.models.CreateInternetGatewayDetails(compartment_id=vcn.compartment_id, is_enabled=True, vcn_id=vcn.id)
-gateway = virtualNetworkClientCompositeOperations.create_internet_gateway_and_wait_for_state(createInternetGatewayDetails, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_AVAILABLE]).data
-route_rules = virtualNetworkClient.get_route_table(vcn.default_route_table_id).data.route_rules
-route_rules.append(oci.core.models.RouteRule(cidr_block=None, destination='0.0.0.0/0', destination_type='CIDR_BLOCK', network_entity_id=gateway.id))
-updateRouteTableDetails = oci.core.models.UpdateRouteTableDetails(route_rules=route_rules)
-virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(vcn.default_route_table_id, updateRouteTableDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
-createNetworkSecurityGroupDetails = oci.core.models.CreateNetworkSecurityGroupDetails(compartment_id=vcn.compartment_id,vcn_id=vcn.id)
+for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).data: print(_)
+#computeClientCompositeOperations.terminate_instance_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Instance.LIFECYCLE_STATE_TERMINATED])
+#virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
+#virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
+#for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
+#for _ in virtualNetworkClient.list_internet_gateways(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_internet_gateway_and_wait_for_state(_.id, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_TERMINATED])
+#for _ in virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_subnet_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_TERMINATED])
+#for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_vcn_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_TERMINATED])
+#createVcnDetails = oci.core.models.CreateVcnDetails(compartment_id=configure.get('tenancy'), cidr_block='10.0.0.0/16')
+#vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
+#createSubnetDetails = oci.core.models.CreateSubnetDetails(compartment_id=vcn.compartment_id, vcn_id=vcn.id, cidr_block=vcn.cidr_block)
+#subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
+#createInternetGatewayDetails = oci.core.models.CreateInternetGatewayDetails(compartment_id=vcn.compartment_id, is_enabled=True, vcn_id=vcn.id)
+#gateway = virtualNetworkClientCompositeOperations.create_internet_gateway_and_wait_for_state(createInternetGatewayDetails, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_AVAILABLE]).data
+#route_rules = virtualNetworkClient.get_route_table(vcn.default_route_table_id).data.route_rules
+#route_rules.append(oci.core.models.RouteRule(cidr_block=None, destination='0.0.0.0/0', destination_type='CIDR_BLOCK', network_entity_id=gateway.id))
+#updateRouteTableDetails = oci.core.models.UpdateRouteTableDetails(route_rules=route_rules)
+#virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(vcn.default_route_table_id, updateRouteTableDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
+#createNetworkSecurityGroupDetails = oci.core.models.CreateNetworkSecurityGroupDetails(compartment_id=vcn.compartment_id,vcn_id=vcn.id)
 #security = virtualNetworkClientCompositeOperations.create_network_security_group_and_wait_for_state(createNetworkSecurityGroupDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE]).data
 #addSecurityRuleDetails = oci.core.models.AddSecurityRuleDetails(direction='INGRESS', source='0.0.0.0/0', source_type='CIDR_BLOCK', protocol='6', tcp_options=oci.core.models.TcpOptions(destination_port_range=oci.core.models.PortRange(min=443, max=443)))
 #addSecurityRulesDetails = oci.core.models.AddNetworkSecurityGroupSecurityRulesDetails(security_rules=[addSecurityRuleDetails])
@@ -187,5 +188,5 @@ async def main():
                     async with session.put(f'https://api.github.com/repos/chaowenGUO/key/contents/ip', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(json.dumps(await asyncio.gather(oracle(), oracle(), gcloud(session), linux(session, token, subnet, availabilitySet))).encode()).decode()}) as _: pass
             async with session.put('https://api.github.com/repos/chaowenGUO/key/contents/key', headers={'authorization':f'token {args.github}'}, json={'message':'message', 'content':base64.b64encode(pathlib.Path(__file__).resolve().parent.joinpath('key').read_bytes()).decode()}) as _: pass
 
-asyncio.run(main())
+#asyncio.run(main())
 #https://51.ruyo.net/14138.html#13 oci 

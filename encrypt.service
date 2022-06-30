@@ -1,2 +1,2 @@
 [Service]
-ExecStart=/bin/bash %h/encrypt.sh
+ExecStart=/bin/bash %h/period.py

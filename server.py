@@ -13,7 +13,7 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
-print(virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0])
+print(virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0])
 #virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 #virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
 #for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
@@ -185,7 +185,7 @@ async def main():
                         await asyncio.sleep(int(network.headers.get('retry-after')))
                         async with session.get(network.headers.get('azure-asyncOperation'), headers={'authorization':f'Bearer {token}'}) as _:
                             if (await _.json()).get('status') == 'Succeeded': break
-                subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
+                #subnet = (await network.json()).get('properties').get('subnets')[0].get('id')
                 async with session.put(f'https://management.azure.com/subscriptions/{subscription}/resourceGroups/machine/providers/Microsoft.Compute/availabilitySets/machine?api-version=2021-07-01', headers={'authorization':f'Bearer {token}'}, json={'location':'westus', 'sku':{'name':'aligned'}, 'properties':{'platformFaultDomainCount':2}}) as response:
                     availabilitySet = (await response.json()).get('id')
                     await win(session, token, subnet, availabilitySet)

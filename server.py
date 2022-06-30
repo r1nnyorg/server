@@ -13,31 +13,7 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
-a = virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options
-print(a, type(a))
-#virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
-#virtualNetworkClientCompositeOperations = oci.core.VirtualNetworkClientCompositeOperations(virtualNetworkClient)
-#for _ in virtualNetworkClient.list_route_tables(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(_.id, oci.core.models.UpdateRouteTableDetails(route_rules=[]), wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
-#for _ in virtualNetworkClient.list_internet_gateways(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_internet_gateway_and_wait_for_state(_.id, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_TERMINATED])
-#for _ in virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_subnet_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_TERMINATED])
-#for _ in virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data: virtualNetworkClientCompositeOperations.delete_vcn_and_wait_for_state(_.id, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_TERMINATED])
-#createVcnDetails = oci.core.models.CreateVcnDetails(compartment_id=configure.get('tenancy'), cidr_block='10.0.0.0/16')
-#vcn = virtualNetworkClientCompositeOperations.create_vcn_and_wait_for_state(createVcnDetails, wait_for_states=[oci.core.models.Vcn.LIFECYCLE_STATE_AVAILABLE]).data
-#createSubnetDetails = oci.core.models.CreateSubnetDetails(compartment_id=vcn.compartment_id, vcn_id=vcn.id, cidr_block=vcn.cidr_block)
-#subnet = virtualNetworkClientCompositeOperations.create_subnet_and_wait_for_state(createSubnetDetails, wait_for_states=[oci.core.models.Subnet.LIFECYCLE_STATE_AVAILABLE]).data
-#createInternetGatewayDetails = oci.core.models.CreateInternetGatewayDetails(compartment_id=vcn.compartment_id, is_enabled=True, vcn_id=vcn.id)
-#gateway = virtualNetworkClientCompositeOperations.create_internet_gateway_and_wait_for_state(createInternetGatewayDetails, wait_for_states=[oci.core.models.InternetGateway.LIFECYCLE_STATE_AVAILABLE]).data
-#route_rules = virtualNetworkClient.get_route_table(vcn.default_route_table_id).data.route_rules
-#route_rules.append(oci.core.models.RouteRule(cidr_block=None, destination='0.0.0.0/0', destination_type='CIDR_BLOCK', network_entity_id=gateway.id))
-#updateRouteTableDetails = oci.core.models.UpdateRouteTableDetails(route_rules=route_rules)
-#virtualNetworkClientCompositeOperations.update_route_table_and_wait_for_state(vcn.default_route_table_id, updateRouteTableDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE])
-#createNetworkSecurityGroupDetails = oci.core.models.CreateNetworkSecurityGroupDetails(compartment_id=vcn.compartment_id,vcn_id=vcn.id)
-#security = virtualNetworkClientCompositeOperations.create_network_security_group_and_wait_for_state(createNetworkSecurityGroupDetails, wait_for_states=[oci.core.models.RouteTable.LIFECYCLE_STATE_AVAILABLE]).data
-#addSecurityRuleDetails = oci.core.models.AddSecurityRuleDetails(direction='INGRESS', source='0.0.0.0/0', source_type='CIDR_BLOCK', protocol='6', tcp_options=oci.core.models.TcpOptions(destination_port_range=oci.core.models.PortRange(min=443, max=443)))
-#addSecurityRulesDetails = oci.core.models.AddNetworkSecurityGroupSecurityRulesDetails(security_rules=[addSecurityRuleDetails])
-#virtualNetworkClient.add_network_security_group_security_rules(security.id, addSecurityRulesDetails)
-#key = asyncssh.generate_private_key('ssh-rsa')
-#key.write_private_key('key')
+virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options = None
 key = asyncssh.import_private_key(pathlib.Path(__file__).parent.joinpath('key').read_bytes())
 
 init = '''sudo apt update
@@ -59,7 +35,7 @@ async def oracle():
 import google.auth, google.auth.transport.requests, google.oauth2, builtins
 
 credentials = google.oauth2.service_account.Credentials.from_service_account_file('gcloud', scopes=['https://www.googleapis.com/auth/cloud-platform'])
-auth_req = google.auth.transport.requests.Request()
+auth_req = google.auth.transport.requsts.Request()
 credentials.refresh(auth_req)
 project = 'chaowenguo'
 zone = 'us-central1-a'

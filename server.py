@@ -13,7 +13,7 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
-virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options = None
+virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0]._tcp_options = None
 key = asyncssh.import_private_key(pathlib.Path(__file__).parent.joinpath('key').read_bytes())
 
 init = '''sudo apt update

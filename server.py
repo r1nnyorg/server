@@ -13,7 +13,7 @@ for _ in computeClient.list_instances(compartment_id=configure.get('tenancy')).d
 virtualNetworkClient = oci.core.VirtualNetworkClient(configure)
 vcn = virtualNetworkClient.list_vcns(compartment_id=configure.get('tenancy')).data[0]
 subnet = virtualNetworkClient.list_subnets(compartment_id=configure.get('tenancy')).data[0]
-virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0]._tcp_options = None
+virtualNetworkClient.list_security_lists(compartment_id=configure.get('tenancy')).data[0].ingress_security_rules[0].tcp_options.destination_port_range.max = 443
 key = asyncssh.import_private_key(pathlib.Path(__file__).parent.joinpath('key').read_bytes())
 
 init = '''sudo apt update
@@ -137,7 +137,8 @@ async def win(session, token, subnet, availabilitySet):
 #if `az group exists -n win`
 #then
 #    az group delete -n win -y
-#fi
+#fimax
+
 #az group create -n win -l westus
 #az vm create -n win -g machine --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64 --availability-set machine --vnet-name machine --subnet machine --nsg ''
 #az vm open-port -g win -n win --port 22

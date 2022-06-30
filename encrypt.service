@@ -1,2 +1,2 @@
 [Service]
-ExecStart=/bin/bash %h/period.py
+ExecStart=/usr/bin/python3 %h/period.py

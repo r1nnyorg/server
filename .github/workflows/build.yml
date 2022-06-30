@@ -26,7 +26,7 @@ jobs:
               password=jWH9228H
               ip=2a02:0180:0006:0001:0000:0000:0000:3142
               sshpass -p $password scp -o StrictHostKeyChecking=no key root@[$ip]:/root/.ssh
-              sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.py encrypt.sh root@[$ip]:/root
+              sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.py period.py root@[$ip]:/root
               sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.service encrypt.timer 12h.service 12h.timer 2h.service 2h.timer 10min.service 10min.timer root@[$ip]:/usr/lib/systemd/system
               sshpass -p $password ssh -o root@$ip 'ssh-keygen -yf /root/.ssh/key > /root/.ssh/authorized_keys;
               sed -i s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/g /etc/ssh/sshd_config;

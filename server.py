@@ -96,9 +96,9 @@ async def linux(session, token, subnet, availabilitySet):
 #    az group delete -n linux -y
 #fi
 #az group create -n linux -l westus
-#az vm image list --offer UbuntuServer --all --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#understand-vm-images
+#az vm image list --sku 22_04-lts-gen2 --all --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#understand-vm-images
 #az vm list-sizes --location westus --output table#https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-manage-vm#find-available-vm-sizes
-#az vm create -n linux -g linux --image Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:latest --size Standard_B1s --admin-username ubuntu --os-disk-size-gb 64 --ssh-key-values azure.pub
+#az vm create -n linux -g linux --image Canonical:0001-com-ubuntu-server-jammy:22_04-lts-gen2:latest --size Standard_B1s --admin-username ubuntu --os-disk-size-gb 64 --ssh-key-values azure.pub
 #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/nsg-quickstart#quickly-open-a-port-for-a-vm
 #az vm open-port -g linux -n linux --port 443
 #az vm show -d -g linux -n linux --query publicIps -o tsv

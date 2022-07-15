@@ -60,8 +60,8 @@ jobs:
               python server.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
               curl https://bitbucket.org/chaowenguo/common/raw/main/package.json > package.json
-              #npm install node-fetch ssh2-promise
-              #node server.js ${{secrets.GITHUB}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              #npm install node-fetch ssh2-promise sskpk
+              #node server.js ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     arm:
         runs-on: ubuntu-latest
         if: github.event.action == '2min'

@@ -137,6 +137,6 @@ if (globalThis.Object.is(network.status, 201))
     }
 }
 const subnet = (await network.json()).properties.subnets[0].id
-//await linux(token, subnet)
 await globalThis.Promise.all([linux(token, subnet), win(token, subnet)])
+process.exit(0)
 //await fetch('https://api.github.com/repos/chaowenGUO/key/contents/0', {method:'put', headers:{'authorization':`token ${process.argv.at(2)}`}, body:globalThis.JSON.stringify({message:'message', content:globalThis.btoa(globalThis.JSON.stringify(await linux(token, subnet)))})})

@@ -11,7 +11,7 @@ async def main():
                     await remote.run('''sudo docker stop ingress
 sudo docker rm ingress
 sudo docker run -d --name ingress --net backend -p 443:443 -v /etc/letsencrypt/live/chaowenguo.eu.org:/encrypt:ro chaowenguo/ingress''')
-                await asyncio.gather(*(f(_) for _ in (remote0, remote1, remote2, remote3)))
+                await asyncio.gather(*(renew(_) for _ in (remote0, remote1, remote2, remote3)))
     await certbot.wait()
 
 asyncio.run(main())

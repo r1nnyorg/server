@@ -12,7 +12,7 @@ async def main():
 sudo docker rm ingress
 sudo docker run -d --name ingress --net backend -p 443:443 -v /etc/letsencrypt/live/chaowenguo.eu.org:/encrypt:ro chaowenguo/ingress''')
                 locals = builtins.locals()
-                await asyncio.gather(*(renew(locals.get('remote' + builtins.str(_))) for _ in builtins.range( 4 )))
+                await asyncio.gather(*(renew(locals.get('remote' + builtins.str(_))) for _ in builtins.range(builtins.len(ips))))
 
     await certbot.wait()
 

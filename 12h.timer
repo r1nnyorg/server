@@ -11,3 +11,4 @@ WantedBy=timers.target
 #[Manager]
 #DefaultEnvironment=github=密码 password=密码
 #systemctl daemon-reexec
+#systemctl daemon-reload

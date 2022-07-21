@@ -1,7 +1,5 @@
 on:
     push:
-    schedule:
-    - cron: '0 */1 * * *'
     repository_dispatch:
     
 jobs:
@@ -91,7 +89,6 @@ jobs:
               #node win.js ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     clean:
         runs-on: ubuntu-latest
-        if: github.event.schedule == '0 */1 * * *'
         permissions: 
             actions: write
         steps:

@@ -44,11 +44,7 @@ async def gcloud(session):
     instance = f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances'
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         if response.status == 200:
-            async with session.delete(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass                 
-    firewall = f'https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls'
-    async with session.get(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as response:
-        if response == 200:
-            async with session.delete(firewall + '/https', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
+            async with session.delete(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as _: pass
     while True:
         await asyncio.sleep(60)
         async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:

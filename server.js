@@ -1,4 +1,4 @@
- import fetch from 'node-fetch'
+import fetch from 'node-fetch'
 import process from 'process'
 import SSH2Promise from 'ssh2-promise'
 import {promises as fs} from 'fs'

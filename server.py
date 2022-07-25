@@ -41,7 +41,7 @@ project = 'chaowenguo'
 zone = 'us-central1-a'
 
 async def gcloud(session):
-    async with session.patch('https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls/default-allow-ssh', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'default-allow-ssh','allowed':[{"IPProtocol": "tcp"}]}) as _: pass
+    async with session.patch(f'https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls/default-allow-ssh', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'default-allow-ssh','allowed':[{'IPProtocol':'tcp'}]}) as _: pass
     instance = f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances'
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         if response.status == 200:

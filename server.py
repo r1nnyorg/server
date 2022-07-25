@@ -41,7 +41,7 @@ project = 'chaowenguo'
 zone = 'us-central1-a'
 
 async def gcloud(session):
-    async with session.patch('https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls/default-allow-ssh', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'default-allow-ssh','allowed':[{"IPProtocol": "all"}]}) as _: pass
+    async with session.patch('https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls/default-allow-ssh', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'default-allow-ssh','allowed':[{"IPProtocol": "tcp"}]}) as _: pass
     instance = f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances'
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         if response.status == 200:
@@ -58,7 +58,7 @@ async def gcloud(session):
         async with asyncssh.connect(ip, username='ubuntu', client_keys=['key'], known_hosts=None) as ssh: await ssh.run(init)
         return ip
 #gcloud auth activate-service-account --key-file=gcloud --project chaowenguo
-#gcloud compute firewall-rules create https --allow=tcp:443
+#gcloud compute firewall-rules update default-allow-ssh --allow tcp
 #gcloud compute instances create google --image-family=ubuntu-2204-lts --image-project=ubuntu-os-cloud --machine-type=e2-micro --zone=us-central1-a --boot-disk-size=30GB --metadata=ssh-keys="ubuntu:`cat google.pub`"
 
 subscription = '9046396e-e215-4cc5-9eb7-e25370140233'

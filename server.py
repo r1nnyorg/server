@@ -127,8 +127,7 @@ async def win(session, token, subnet, availabilitySet):
 #if `az group exists -n win`
 #then
 #    az group delete -n win -y
-#fimax
-
+#fi
 #az group create -n win -l westus
 #az vm create -n win -g machine --image MicrosoftWindowsServer:WindowsServer:2022-datacenter-azure-edition-core-smalldisk:latest --size Standard_B1s --admin-username chaowenguo --admin-password ${{secrets.PASSWORD}} --os-disk-size-gb 64 --availability-set machine --vnet-name machine --subnet machine --nsg ''
 #az vm open-port -g win -n win --port 22

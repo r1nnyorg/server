@@ -41,6 +41,7 @@ project = 'chaowenguo'
 zone = 'us-central1-a'
 
 async def gcloud(session):
+    async with session.patch('https://compute.googleapis.com/compute/v1/projects/{project}/global/firewalls/default-allow-ssh', headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'default-allow-ssh','allowed':[{"IPProtocol": "all"}]}) as _: pass
     instance = f'https://compute.googleapis.com/compute/v1/projects/{project}/zones/{zone}/instances'
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
         if response.status == 200:
@@ -49,7 +50,6 @@ async def gcloud(session):
         await asyncio.sleep(60)
         async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:
             if response.status == 404: break
-    async with session.post(firewall, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'https','allowed':[{'IPProtocol':'tcp','ports':['443']}]}) as _: pass
     async with session.post(instance, headers={'authorization':f'Bearer {credentials.token}'}, json={'name':'google','machineType':f'zones/{zone}/machineTypes/e2-micro','networkInterfaces':[{'accessConfigs':[{'type':'ONE_TO_ONE_NAT','name':'External NAT'}],'network':'global/networks/default'}],'disks':[{'boot':True,'initializeParams':{'diskSizeGb':'30','sourceImage':'projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts'}}], 'metadata':{'items':[{'key':'ssh-keys','value':'ubuntu:' + key.export_public_key().decode()}]}}) as _: pass
     await asyncio.sleep(5)
     async with session.get(instance + '/google', headers={'authorization':f'Bearer {credentials.token}'}) as response:

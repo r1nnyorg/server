@@ -76,7 +76,7 @@ jobs:
               python arm.py
     win:
         runs-on: ubuntu-latest
-        if: github.event_name == 'dummy'
+        if: github.event_name == 'push'
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-python@main
@@ -88,6 +88,7 @@ jobs:
         - run: |
               #pip install aiohttp
               #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              curl https://bitbucket.org/chaowenguo/common/raw/main/package.json > package.json
               npm install node-fetch
               node win.js ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     clean:

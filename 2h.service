@@ -1,2 +1,3 @@
 [Service]
-ExecStart=/usr/bin/node %h/browserstack.js 
+ExecStart=/bin/curl -H authorization:token\s${github} -d {\"event_type\":\"2h\"} https://api.github.com/repos/r1nnyorg/mime/dispatches
+ExecStart=/usr/bin/node %h/browserstack.js

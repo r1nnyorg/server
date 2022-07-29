@@ -1,3 +1,2 @@
 [Service]
-ExecStartPre=/bin/curl -H authorization:token\s${github} -d {\"event_type\":\"10min\"} https://api.github.com/repos/bvttvborg/pal/dispatches
-ExecStart=/bin/curl -H authorization:token\s${github} -d {\"event_type\":\"10min\"} https://api.github.com/repos/bvttvborg/mime/dispatches
+ExecStart=/bin/curl -H authorization:token\s${github} -d {\"event_type\":\"10min\"} https://api.github.com/repos/r1nnyorg/mime/dispatches

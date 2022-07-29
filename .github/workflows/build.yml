@@ -76,17 +76,20 @@ jobs:
               python arm.py
     win:
         runs-on: ubuntu-latest
-        if: github.event_name == 'dummy'
+        if: github.event_name == 'push'
         steps:
         - uses: actions/checkout@main
         - uses: actions/setup-python@main
           with:
               python-version: 3.x
+        - uses: actions/setup-node@main
+          with:
+              node-version: 18.x
         - run: |
-              pip install aiohttp
-              python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
-              #npm install node-fetch
-              #node win.js ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              #pip install aiohttp
+              #python win.py ${{secrets.AZURE}} ${{secrets.AZUREPASSWORD}} ${{secrets.TENANT}} ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
+              npm install node-fetch
+              node win.js ${{secrets.PASSWORD}}${{secrets.PASSWORD}}
     clean:
         runs-on: ubuntu-latest
         permissions: 

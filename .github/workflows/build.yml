@@ -26,10 +26,10 @@ jobs:
               sshpass -p $password scp -o StrictHostKeyChecking=no key root@[$ip]:/root/.ssh
               sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.py period.py root@[$ip]:/root
               sshpass -p $password scp -o StrictHostKeyChecking=no encrypt.service encrypt.timer 12h.service 12h.timer 2h.service 2h.timer 15min.service 15min.timer root@[$ip]:/usr/lib/systemd/system
-              sshpass -p $password ssh -o root@$ip 'ssh-keygen -yf /root/.ssh/key > /root/.ssh/authorized_keys;
-              sed -i s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/g /etc/ssh/sshd_config;
-              systemctl restart ssh;
-              apt update;
+              sshpass -p $password ssh -o root@$ip 'ssh-keygen -yf /root/.ssh/key > /root/.ssh/authorized_keys
+              sed -i s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/g /etc/ssh/sshd_config
+              systemctl restart ssh
+              apt update
               wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb;
               apt install -y --no-install-recommends ./google-chrome-stable_current_amd64.deb libx11-xcb1 x2goserver-xsession certbot python3-aiohttp python3-asyncssh curl;
               rm google-chrome-stable_current_amd64.deb;
